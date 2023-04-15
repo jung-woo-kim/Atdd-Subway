@@ -1,6 +1,6 @@
 package com.example.subway.line;
 
-import com.example.subway.AcceptanceTest;
+import com.example.subway.common.AcceptanceTest;
 import com.example.subway.line.exception.LineExceptionType;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;

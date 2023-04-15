@@ -1,5 +1,8 @@
-package com.example.subway;
+package com.example.subway.station.ui;
 
+import com.example.subway.station.dto.StationRequest;
+import com.example.subway.station.dto.StationResponse;
+import com.example.subway.station.application.StationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

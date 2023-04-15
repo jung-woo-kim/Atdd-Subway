@@ -1,4 +1,4 @@
-package com.example.subway;
+package com.example.subway.common;
 
 import com.example.subway.utils.DatabaseCleanup;
 import io.restassured.RestAssured;

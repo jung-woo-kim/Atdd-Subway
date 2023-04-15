@@ -1,6 +1,6 @@
 package com.example.subway.line.application;
 
-import com.example.subway.line.dao.LineRepository;
+import com.example.subway.line.domain.LineRepository;
 import com.example.subway.line.domain.Line;
 import com.example.subway.line.dto.LineRequest;
 import com.example.subway.line.dto.LineResponse;
@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
 
 @Service
 @Transactional(readOnly = true)

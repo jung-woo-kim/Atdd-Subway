@@ -1,5 +1,6 @@
-package com.example.subway;
+package com.example.subway.station;
 
+import com.example.subway.common.AcceptanceTest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

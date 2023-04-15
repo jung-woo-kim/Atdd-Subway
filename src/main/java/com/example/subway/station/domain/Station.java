@@ -1,4 +1,4 @@
-package com.example.subway;
+package com.example.subway.station.domain;
 
 import jakarta.persistence.*;
 
