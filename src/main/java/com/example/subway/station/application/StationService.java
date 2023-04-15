@@ -1,5 +1,9 @@
-package com.example.subway;
+package com.example.subway.station.application;
 
+import com.example.subway.station.dto.StationRequest;
+import com.example.subway.station.dto.StationResponse;
+import com.example.subway.station.domain.Station;
+import com.example.subway.station.domain.StationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

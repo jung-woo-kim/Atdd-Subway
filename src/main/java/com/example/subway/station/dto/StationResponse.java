@@ -1,4 +1,4 @@
-package com.example.subway;
+package com.example.subway.station.dto;
 
 public class StationResponse {
     private Long id;
