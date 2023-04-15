@@ -7,6 +7,7 @@ import com.example.subway.line.dto.LineResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -17,6 +18,9 @@ class LineServiceTest {
     @Mock
     private LineRepository lineRepository;
 
+    @InjectMocks
+    private LineService lineService;
+
     @Test
     void saveLine() {
         //given
@@ -25,7 +29,6 @@ class LineServiceTest {
 
         //when
         when(lineRepository.save(line)).thenReturn(new Line("2호선", "green"));
-        LineService lineService = new LineService(lineRepository);
 
         //then
         LineResponse lineResponse = lineService.saveLine(lineRequest);
