@@ -1,6 +1,6 @@
 package com.example.subway.line.domain;
 
-import com.example.subway.config.BaseEntity;
+import com.example.subway.common.BaseEntity;
 import jakarta.persistence.*;
 
 import java.util.Objects;
