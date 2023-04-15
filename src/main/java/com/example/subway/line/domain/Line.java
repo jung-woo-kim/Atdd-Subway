@@ -10,13 +10,13 @@ public class Line extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long Id;
+    private Long Id;
 
     @Column(length = 20, nullable = false)
-    String name;
+    private String name;
 
     @Column(length = 20, nullable = false)
-    String color;
+    private String color;
 
     public Line() {
     }
@@ -36,6 +36,11 @@ public class Line extends BaseEntity {
 
     public String getColor() {
         return color;
+    }
+
+    public void update(String name, String color) {
+        this.name = name;
+        this.color = color;
     }
 
     @Override

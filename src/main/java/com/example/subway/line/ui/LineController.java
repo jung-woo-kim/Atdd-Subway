@@ -23,6 +23,12 @@ public class LineController {
         return ResponseEntity.created(URI.create("/lines" + line.getId())).body(line);
     }
 
+    @PostMapping("/lines/{id}")
+    public ResponseEntity<LineResponse> updateLine(@PathVariable Long id, @RequestBody LineRequest lineRequest) {
+        lineService.update(id, lineRequest);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/lines")
     public ResponseEntity<List<LineResponse>> showLines() {
         List<LineResponse> allLines = lineService.findAllLines();

@@ -101,4 +101,19 @@ class LineServiceTest {
         //then
         assertThrows(LineNotExistedException.class, ()-> lineService.findById(id));
     }
+
+    @DisplayName("노선을 업데이트 한다.")
+    @Test
+    void updateLine() {
+        //given
+        Line lineGreen = new Line("2호선", "green");
+        Long id = 1L;
+        LineRequest lineRequest = new LineRequest("1호선","orange");
+        //when
+        when(lineRepository.findById(id)).thenReturn(Optional.of(lineGreen));
+        lineService.update(id,lineRequest);
+        //then
+        assertEquals("orange",lineGreen.getColor());
+        assertEquals("1호선",lineGreen.getName());
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,10 +45,14 @@ public class LineService {
     }
 
     public LineResponse findById(Long id) {
-        Optional<Line> lineById = lineRepository.findById(id);
-        if (lineById.isPresent()) {
-            return LineResponse.of(lineById.get());
-        }
-        throw new LineNotExistedException(LineExceptionType.LINE_NOT_EXIST);
+        Line line = lineRepository.findById(id).orElseThrow(() -> new LineNotExistedException(LineExceptionType.LINE_NOT_EXIST));;
+        return LineResponse.of(line);
+    }
+
+    // Hibernate의 기본 설정은 dirty read 이기 때문에 save 하지 않아도 업데이트 된다.
+    @Transactional
+    public void update(Long id, LineRequest lineRequest) {
+        Line line = lineRepository.findById(id).orElseThrow(() -> new LineNotExistedException(LineExceptionType.LINE_NOT_EXIST));
+        line.update(lineRequest.getName(), lineRequest.getColor());
     }
 }
