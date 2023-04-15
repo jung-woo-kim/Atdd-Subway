@@ -45,7 +45,7 @@ public class LineService {
     }
 
     public LineResponse findById(Long id) {
-        Line line = lineRepository.findById(id).orElseThrow(() -> new LineNotExistedException(LineExceptionType.LINE_NOT_EXIST));;
+        Line line = lineRepository.findById(id).orElseThrow(() -> new LineNotExistedException(LineExceptionType.LINE_NOT_EXIST));
         return LineResponse.of(line);
     }
 
@@ -54,5 +54,11 @@ public class LineService {
     public void update(Long id, LineRequest lineRequest) {
         Line line = lineRepository.findById(id).orElseThrow(() -> new LineNotExistedException(LineExceptionType.LINE_NOT_EXIST));
         line.update(lineRequest.getName(), lineRequest.getColor());
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Line line = lineRepository.findById(id).orElseThrow(() -> new LineNotExistedException(LineExceptionType.LINE_NOT_EXIST));
+        lineRepository.delete(line);
     }
 }

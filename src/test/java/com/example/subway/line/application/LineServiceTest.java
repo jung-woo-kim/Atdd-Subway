@@ -5,6 +5,7 @@ import com.example.subway.line.domain.Line;
 import com.example.subway.line.dto.LineRequest;
 import com.example.subway.line.dto.LineResponse;
 import com.example.subway.line.exception.LineDuplicateException;
+import com.example.subway.line.exception.LineExceptionType;
 import com.example.subway.line.exception.LineNotExistedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -115,5 +116,28 @@ class LineServiceTest {
         //then
         assertEquals("orange",lineGreen.getColor());
         assertEquals("1호선",lineGreen.getName());
+    }
+
+    @DisplayName("존재하지 않는 노선을 업데이트 한다.")
+    @Test
+    void updateNotExistedLine() {
+        //given
+        Long id = 1L;
+        LineRequest lineRequest = new LineRequest("1호선","orange");
+        //when
+        when(lineRepository.findById(id)).thenReturn(Optional.empty());
+        //then
+        assertThrows(LineNotExistedException.class,()-> lineService.update(id,lineRequest));
+    }
+
+    @DisplayName("존재하지 않는 노선을 삭제한다.")
+    @Test
+    void deleteLine() {
+        //given
+        Long id = 1L;
+        //when
+        when(lineRepository.findById(id)).thenReturn(Optional.empty());
+        //then
+        assertThrows(LineNotExistedException.class,()-> lineService.delete(id));
     }
 }
