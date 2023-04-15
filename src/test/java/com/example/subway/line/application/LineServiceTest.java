@@ -5,6 +5,7 @@ import com.example.subway.line.domain.Line;
 import com.example.subway.line.dto.LineRequest;
 import com.example.subway.line.dto.LineResponse;
 import com.example.subway.line.exception.LineDuplicateException;
+import com.example.subway.line.exception.LineNotExistedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -73,7 +75,30 @@ class LineServiceTest {
         List<LineResponse> lines = lineService.findAllLines();
         assertTrue(lines.contains(LineResponse.of(lineGreen)));
         assertTrue(lines.contains(LineResponse.of(lineRed)));
+    }
 
+    @DisplayName("저장된 노선을 조회한다.")
+    @Test
+    void findLine() {
+        //given
+        Line lineGreen = new Line("2호선", "green");
+        Long id = 1L;
+        //when
+        when(lineRepository.findById(id)).thenReturn(Optional.of(lineGreen));
 
+        //then
+        assertEquals(LineResponse.of(lineGreen),lineService.findById(id));
+    }
+
+    @DisplayName("저장되지 않은 노선을 조회한다.")
+    @Test
+    void findNotExistedLine() {
+        //given
+        Long id = 10L;
+        //when
+        when(lineRepository.findById(id)).thenReturn(Optional.empty());
+
+        //then
+        assertThrows(LineNotExistedException.class, ()-> lineService.findById(id));
     }
 }

@@ -76,12 +76,30 @@ public class LineAcceptanceTest extends AcceptanceTest {
     void getLine() {
         // given
         // 지하철_노선_등록되어_있음
+        createLine("강남역","bg-red-600");
 
         // when
         // 지하철_노선_조회_요청
-
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
+                .when().get("/lines/1").
+                then().log().all().extract();
         // then
         // 지하철_노선_응답됨
+        assertEquals(HttpStatus.OK.value(),response.statusCode());
+        assertEquals("강남역",response.jsonPath().getString("name"));
+    }
+
+    @DisplayName("존재하지 않는 지하철 노선을 조회한다.")
+    @Test
+    void getNotExistedLine() {
+        // when
+        // 지하철_노선_조회_요청
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
+                .when().get("/lines/1").
+                then().log().all().extract();
+        // then
+        // 지하철_노선_응답됨
+        assertEquals(HttpStatus.NOT_FOUND.value(),response.statusCode());
     }
 
     @DisplayName("지하철 노선을 수정한다.")
