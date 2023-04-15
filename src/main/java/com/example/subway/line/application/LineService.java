@@ -9,6 +9,8 @@ import com.example.subway.line.exception.LineExceptionType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class LineService {
@@ -24,7 +26,7 @@ public class LineService {
         validateExistedLine(lineRequest);
         Line line = lineRepository.save(new Line(lineRequest.getName(), lineRequest.getColor()));
 
-        return createLineResponse(line);
+        return LineResponse.of(line);
 
     }
 
@@ -35,13 +37,7 @@ public class LineService {
         }
     }
 
-    private LineResponse createLineResponse(Line line) {
-        return new LineResponse(
-                line.getId(),
-                line.getName(),
-                line.getColor(),
-                line.getCreatedDate(),
-                line.getModifiedDate()
-        );
+    public List<LineResponse> findAllLines() {
+        return lineRepository.findAll().stream().map(LineResponse::of).toList();
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,10 +60,15 @@ public class LineAcceptanceTest extends AcceptanceTest {
 
         // when
         // 지하철_노선_목록_조회_요청
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
+                .when().get("/lines").
+                then().log().all().extract();
 
         // then
         // 지하철_노선_목록_응답됨
         // 지하철_노선_목록_포함됨
+        assertEquals(HttpStatus.OK.value(),response.statusCode());
+        assertEquals(2,response.jsonPath().getList("name", String.class).size());
     }
 
     @DisplayName("지하철 노선을 조회한다.")
