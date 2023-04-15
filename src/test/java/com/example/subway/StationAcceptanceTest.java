@@ -14,7 +14,11 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Feature: 지하철 노선 관리 기능
+ */
 @DisplayName("지하철역 관련 기능")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class StationAcceptanceTest {
@@ -56,6 +60,38 @@ public class StationAcceptanceTest {
      * Then 2개의 지하철역을 응답 받는다
      */
     // TODO: 지하철역 목록 조회 인수 테스트 메서드 생성
+    @DisplayName("지하철역을 두개 생성하고, 목록을 조회하면 2개의 지하철역을 응답 받는다.")
+    @Test
+    void readStation() {
+        //given
+        Map<String, String> params = new HashMap<>();
+        params.put("name", "강남역");
+
+        RestAssured.given().log().all()
+                .body(params)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post("/stations")
+                .then().log().all()
+                .extract();
+
+        params = new HashMap<>();
+        params.put("name", "성수역");
+
+        RestAssured.given().log().all()
+                .body(params)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post("/stations")
+                .then().log().all()
+                .extract();
+        //when
+        List<String> stations = RestAssured.given().log().all()
+                .when().get("/stations")
+                .then().log().all()
+                .extract().jsonPath().getList("name", String.class);
+        //then
+        assertEquals(2,stations.size());
+
+    }
 
     /**
      * Given 지하철역을 생성하고
@@ -63,5 +99,32 @@ public class StationAcceptanceTest {
      * Then 그 지하철역 목록 조회 시 생성한 역을 찾을 수 없다
      */
     // TODO: 지하철역 제거 인수 테스트 메서드 생성
+    @DisplayName("지하철역을 삭제한다.")
+    @Test
+    void deleteStation() {
+        //given
+        Map<String, String> params = new HashMap<>();
+        params.put("name", "강남역");
 
+        RestAssured.given().log().all()
+                .body(params)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post("/stations")
+                .then().log().all()
+                .extract();
+        //when
+        RestAssured.given().log().all()
+                .when().delete("/stations/1")
+                .then().log().all()
+                .extract();
+
+
+        List<String> stations = RestAssured.given().log().all()
+                .when().get("/stations")
+                .then().log().all()
+                .extract().jsonPath().getList("name", String.class);
+
+        //then
+        assertFalse(stations.contains("강남역"));
+    }
 }
