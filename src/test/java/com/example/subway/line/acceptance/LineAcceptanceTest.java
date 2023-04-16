@@ -4,9 +4,13 @@ import com.example.subway.common.AcceptanceTest;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.example.subway.line.acceptance.LineStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,31 +19,44 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("지하철 노선 관련 기능")
 public class LineAcceptanceTest extends AcceptanceTest {
 
-    private final String 강남역 = "강남역";
-    private final String 초록색 = "green";
+    private static Map<String, String> 경춘선;
+    private static Map<String, String> 신분당선;
 
-    private final String 신분당역 = "신분당역";
-    private final String 빨간색 = "red";
+    private static final String 경춘 = "경춘선";
+    private static final String 초록색 = "green";
+    private static final String 신분당 = "신분당선";
+    private static final String 빨간색 = "red";
 
+    @BeforeAll
+    public static void given() {
+        경춘선 = new HashMap<>();
+        신분당선 = new HashMap<>();
+
+        경춘선.put("name", 경춘);
+        경춘선.put("color", 초록색);
+
+        신분당선.put("name", 신분당);
+        신분당선.put("color", 빨간색);
+    }
 
     @DisplayName("지하철 노선을 생성한다.")
     @Test
     void createLine() {
         // when
-        ExtractableResponse<Response> response = 지하철_노선_생성_요청(강남역, 초록색);
+        ExtractableResponse<Response> response = 지하철_노선_생성_요청(경춘선);
 
         // then
-        노선_생성_확인(response, 강남역, 초록색);
+        노선_생성_확인(response, 경춘선);
     }
 
     @DisplayName("기존에 존재하는 지하철 노선 이름으로 지하철 노선을 생성한다.")
     @Test
     void createLine2() {
         // given
-        노선_등록되어_있음(강남역, 초록색);
+        노선_등록되어_있음(경춘선);
 
         // when
-        ExtractableResponse<Response> response = 지하철_노선_생성_요청(강남역, 초록색);
+        ExtractableResponse<Response> response = 지하철_노선_생성_요청(경춘선);
 
         // then
         // 지하철_노선_생성_실패됨
@@ -53,8 +70,8 @@ public class LineAcceptanceTest extends AcceptanceTest {
         // given
         // 지하철_노선_등록되어_있음
         // 지하철_노선_등록되어_있음
-        노선_등록되어_있음(강남역, 초록색);
-        노선_등록되어_있음(신분당역, 빨간색);
+        노선_등록되어_있음(경춘선);
+        노선_등록되어_있음(신분당선);
 
         // when
         // 지하철_노선_목록_조회_요청
@@ -71,7 +88,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
     void getLine() {
         // given
         // 지하철_노선_등록되어_있음
-        노선_등록되어_있음(강남역, 초록색);
+        노선_등록되어_있음(경춘선);
 
         // when
         // 지하철_노선_조회_요청
@@ -79,7 +96,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
 
         // then
         // 지하철_노선_응답됨
-        노선_조회_확인(response, 강남역, 초록색);
+        노선_조회_확인(response, 경춘선);
     }
 
     @DisplayName("존재하지 않는 지하철 노선을 조회한다.")
@@ -98,11 +115,11 @@ public class LineAcceptanceTest extends AcceptanceTest {
     void updateLine() {
         // given
         // 지하철_노선_등록되어_있음
-        노선_등록되어_있음(강남역, 초록색);
+        노선_등록되어_있음(경춘선);
 
         // when
         // 지하철_노선_수정_요청
-        ExtractableResponse<Response> response = 지하철_노선_수정_요청(1L, 신분당역, 빨간색);
+        ExtractableResponse<Response> response = 지하철_노선_수정_요청(1L, 신분당선);
 
         // then
         노선_변경_확인(response);
@@ -113,7 +130,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
 
         // then
         // 지하철_노선_응답됨
-        노선_조회_확인(updatedResponse, 신분당역, 빨간색);
+        노선_조회_확인(updatedResponse, 신분당선);
     }
 
     @DisplayName("존재하지 않는 지하철 노선을 수정한다.")
@@ -121,7 +138,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
     void updateNotExistedLine() {
         // when
         // 지하철_노선_수정_요청
-        ExtractableResponse<Response> response = 지하철_노선_수정_요청(1L, 신분당역, 빨간색);
+        ExtractableResponse<Response> response = 지하철_노선_수정_요청(1L, 신분당선);
 
         // then
         노선_없음_확인(response);
@@ -132,7 +149,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
     void deleteLine() {
         // given
         // 지하철_노선_등록되어_있음
-        노선_등록되어_있음(강남역,초록색);
+        노선_등록되어_있음(경춘선);
 
         // when
         // 지하철_노선_제거_요청

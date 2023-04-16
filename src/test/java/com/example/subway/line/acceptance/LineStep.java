@@ -3,9 +3,7 @@ package com.example.subway.line.acceptance;
 import com.example.subway.line.exception.LineExceptionType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.springframework.http.HttpStatus;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.subway.common.CommonAssert.*;
@@ -15,11 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LineStep {
     private static String path = "/lines";
 
-    public static ExtractableResponse<Response> 지하철_노선_생성_요청(String name, String color) {
-        Map<String, String> params = new HashMap<>();
-        params.put("name", name);
-        params.put("color", color);
-
+    public static ExtractableResponse<Response> 지하철_노선_생성_요청(Map<String, String> params) {
         return post(path, params);
     }
 
@@ -31,10 +25,7 @@ public class LineStep {
         return get(path, id);
     }
 
-    public static ExtractableResponse<Response> 지하철_노선_수정_요청(Long id, String name, String color) {
-        Map<String, String> params = new HashMap<>();
-        params.put("name", name);
-        params.put("color", color);
+    public static ExtractableResponse<Response> 지하철_노선_수정_요청(Long id, Map<String, String> params ) {
         return update(path, id, params);
     }
 
@@ -42,14 +33,14 @@ public class LineStep {
         return delete(path, id);
     }
 
-    public static void 노선_생성_확인(ExtractableResponse<Response> response, String name, String color) {
+    public static void 노선_생성_확인(ExtractableResponse<Response> response, Map<String, String> params) {
         요청_생성_확인(response);
-        노선_생성_값_확인(response, name, color);
+        노선_생성_값_확인(response, params);
     }
 
-    public static void 노선_생성_값_확인(ExtractableResponse<Response> response, String name, String color) {
-        assertEquals(name, response.jsonPath().get("name").toString());
-        assertEquals(color, response.jsonPath().get("color").toString());
+    public static void 노선_생성_값_확인(ExtractableResponse<Response> response, Map<String, String> params) {
+        assertEquals(params.get("name"), response.jsonPath().get("name").toString());
+        assertEquals(params.get("color"), response.jsonPath().get("color").toString());
     }
 
     public static void 노선_목록_확인(ExtractableResponse<Response> response) {
@@ -57,9 +48,9 @@ public class LineStep {
         assertEquals(2, response.jsonPath().getList("name", String.class).size());
     }
 
-    public static void 노선_조회_확인(ExtractableResponse<Response> response, String name, String color) {
+    public static void 노선_조회_확인(ExtractableResponse<Response> response, Map<String, String> params) {
         요청_조회_확인(response);
-        노선_생성_값_확인(response, name, color);
+        노선_생성_값_확인(response, params);
     }
 
     public static void 노선_이름_중복_실패_확인(ExtractableResponse<Response> response) {
@@ -75,7 +66,7 @@ public class LineStep {
         요청_변경_확인(response);
     }
 
-    public static void 노선_등록되어_있음(String name, String color) {
-        지하철_노선_생성_요청(name, color);
+    public static void 노선_등록되어_있음(Map<String, String> params) {
+        지하철_노선_생성_요청(params);
     }
 }
