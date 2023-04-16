@@ -3,7 +3,7 @@ package com.example.subway.station;
 import com.example.subway.common.AcceptanceTest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,11 +17,12 @@ import static com.example.subway.station.StationStep.*;
  */
 @DisplayName("지하철역 관련 기능")
 public class StationAcceptanceTest extends AcceptanceTest {
-    Map<String, String> params;
-    private final String 강남역 = "강남역";
+    private static Map<String, String> params;
+    private static final String 강남역 = "강남역";
+    private static final String 성수역 = "성수역";
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void given() {
         params = new HashMap<>();
         params.put("name", 강남역);
     }
@@ -57,10 +58,10 @@ public class StationAcceptanceTest extends AcceptanceTest {
         //given
         역_생성_되어있음(params);
 
-        강남역_To_성수역();
+        to_성수역();
 
         역_생성_되어있음(params);
-
+        to_강남역();
         //when
         ExtractableResponse<Response> response = 지하철_역_목록_조회();
 
@@ -91,8 +92,13 @@ public class StationAcceptanceTest extends AcceptanceTest {
         역_미존재_확인(response, 강남역);
     }
 
-    private void 강남역_To_성수역() {
+    private void to_성수역() {
         params = new HashMap<>();
-        params.put("name", "성수역");
+        params.put("name", 성수역);
+    }
+
+    private void to_강남역() {
+        params = new HashMap<>();
+        params.put("name", 강남역);
     }
 }
