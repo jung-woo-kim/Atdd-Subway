@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.subway.common.CommonAssert.*;
 import static com.example.subway.common.CommonRestAssured.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -42,7 +43,7 @@ public class LineStep {
     }
 
     public static void 노선_생성_확인(ExtractableResponse<Response> response, String name, String color) {
-        assertEquals(HttpStatus.CREATED.value(), response.statusCode());
+        요청_생성_확인(response);
         노선_생성_값_확인(response, name, color);
     }
 
@@ -52,26 +53,26 @@ public class LineStep {
     }
 
     public static void 노선_목록_확인(ExtractableResponse<Response> response) {
-        assertEquals(HttpStatus.OK.value(), response.statusCode());
+        요청_조회_확인(response);
         assertEquals(2, response.jsonPath().getList("name", String.class).size());
     }
 
     public static void 노선_조회_확인(ExtractableResponse<Response> response, String name, String color) {
-        assertEquals(HttpStatus.OK.value(), response.statusCode());
+        요청_조회_확인(response);
         노선_생성_값_확인(response, name, color);
     }
 
     public static void 노선_이름_중복_실패_확인(ExtractableResponse<Response> response) {
-        assertEquals(HttpStatus.BAD_REQUEST.value(), response.statusCode());
+        요청_BAD_확인(response);
         assertEquals(LineExceptionType.LINE_DUPLICATE.getErrorCode(), (Integer) response.jsonPath().get("errorCode"));
     }
 
     public static void 노선_없음_확인(ExtractableResponse<Response> response) {
-        assertEquals(HttpStatus.NOT_FOUND.value(), response.statusCode());
+        요청_없음_확인(response);
     }
 
     public static void 노선_변경_확인(ExtractableResponse<Response> response) {
-        assertEquals(HttpStatus.NO_CONTENT.value(), response.statusCode());
+        요청_변경_확인(response);
     }
 
     public static void 노선_등록되어_있음(String name, String color) {
