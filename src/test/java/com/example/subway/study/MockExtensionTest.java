@@ -1,9 +1,10 @@
 package com.example.subway.study;
 
-import com.example.subway.Station;
-import com.example.subway.StationRepository;
-import com.example.subway.StationResponse;
-import com.example.subway.StationService;
+
+import com.example.subway.station.application.StationService;
+import com.example.subway.station.domain.Station;
+import com.example.subway.station.domain.StationRepository;
+import com.example.subway.station.dto.StationResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
