@@ -21,8 +21,8 @@ public class StationAcceptanceTest extends AcceptanceTest {
 
     @BeforeAll
     public static void given() {
-        강남역 = StationFixData.create_강남역();
-        성수역 = StationFixData.create_성수역();
+        강남역 = StationFixData.create_강남역_params();
+        성수역 = StationFixData.create_성수역_params();
     }
     /**
      * When 지하철역을 생성하면

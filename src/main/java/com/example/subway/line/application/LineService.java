@@ -2,6 +2,7 @@ package com.example.subway.line.application;
 
 import com.example.subway.line.domain.LineRepository;
 import com.example.subway.line.domain.Line;
+import com.example.subway.line.domain.Section;
 import com.example.subway.line.dto.LineRequest;
 import com.example.subway.line.dto.LineResponse;
 import com.example.subway.line.dto.SectionRequest;
@@ -29,9 +30,15 @@ public class LineService {
     }
 
     @Transactional
-    public LineResponse saveLine(LineRequest lineRequest) {
-        validateExistedLine(lineRequest);
-        Line line = lineRepository.save(new Line(lineRequest.getName(), lineRequest.getColor()));
+    public LineResponse saveLine(LineRequest request) {
+        validateExistedLine(request);
+        Line line = lineRepository.save(new Line(request.getName(), request.getColor()));
+
+        if (request.getUpStationId() != null && request.getDownStationId() != null && request.getDistance() != 0) {
+            Station upStation = stationService.findById(request.getUpStationId());
+            Station downStation = stationService.findById(request.getDownStationId());
+            line.getSections().add(new Section(upStation, downStation, line, request.getDistance()));
+        }
 
         return LineResponse.of(line);
 

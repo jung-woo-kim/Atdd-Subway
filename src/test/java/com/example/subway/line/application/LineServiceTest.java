@@ -6,6 +6,9 @@ import com.example.subway.line.dto.LineRequest;
 import com.example.subway.line.dto.LineResponse;
 import com.example.subway.line.exception.LineDuplicateException;
 import com.example.subway.line.exception.LineNotExistedException;
+import com.example.subway.station.StationFixData;
+import com.example.subway.station.application.StationService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.subway.line.acceptance.LineFixData.*;
+import static com.example.subway.line.acceptance.LineFixData.createLine_경춘선;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -24,70 +29,77 @@ class LineServiceTest {
     @Mock
     private LineRepository lineRepository;
 
+    @Mock
+    private StationService stationService;
+
     @InjectMocks
     private LineService lineService;
+
+    private Line 경춘선;
+    private Line 신분당선;
+    private LineRequest 경춘선_요청;
+    private LineRequest 신분당선_요청;
+
+    @BeforeEach
+    void setUp() {
+        경춘선 = createLine_경춘선();
+        신분당선 = createLine_신분당();
+        경춘선_요청 = createLineRequest_경춘선();
+        신분당선_요청 = createLineRequest_신분당선();
+    }
 
     @DisplayName("한 노선을 저장한다.")
     @Test
     void saveLine() {
-        //given
-        Line line = new Line("2호선", "green");
-        LineRequest lineRequest = new LineRequest("2호선", "green");
-
         //when
-        when(lineRepository.save(line)).thenReturn(new Line("2호선", "green"));
+        when(stationService.findById(1L)).thenReturn(StationFixData.create_강남역());
+        when(stationService.findById(2L)).thenReturn(StationFixData.create_성수역());
+        when(lineRepository.save(경춘선)).thenReturn(경춘선);
 
         //then
-        LineResponse lineResponse = lineService.saveLine(lineRequest);
-        assertEquals("2호선",lineResponse.getName());
+        LineResponse lineResponse = lineService.saveLine(경춘선_요청);
+        assertEquals(경춘, lineResponse.getName());
     }
 
     @DisplayName("중복된 이름의 노선을 저장한다.")
     @Test
     void saveSameLine() {
-        //given
-        Line lineGreen = new Line("2호선", "green");
-
-        LineRequest lineRequestGreen = new LineRequest("2호선", "green");
-        LineRequest lineRequestRed = new LineRequest("2호선", "red");
-
 
         //when
-        when(lineRepository.save(lineGreen)).thenReturn(new Line("2호선", "green"));
+        when(stationService.findById(1L)).thenReturn(StationFixData.create_강남역());
+        when(stationService.findById(2L)).thenReturn(StationFixData.create_성수역());
+        when(lineRepository.save(경춘선)).thenReturn(경춘선);
 
-        lineService.saveLine(lineRequestGreen);
-        when(lineRepository.findByName("2호선")).thenReturn(new Line("2호선", "green"));
+        lineService.saveLine(경춘선_요청);
+        when(lineRepository.findByName(경춘)).thenReturn(createLine_경춘선());
 
         //then
-        assertThrows(LineDuplicateException.class,() ->lineService.saveLine(lineRequestRed));
+        assertThrows(LineDuplicateException.class, () -> lineService.saveLine(경춘선_요청));
     }
 
     @DisplayName("저장된 노선 목록을 조회한다.")
     @Test
     void findAllLines() {
-        //given
-        Line lineGreen = new Line("2호선", "green");
-        Line lineRed = new Line("2호선", "red");
+
         //when
-        when(lineRepository.findAll()).thenReturn(List.of(lineGreen,lineRed));
+        when(lineRepository.findAll()).thenReturn(List.of(경춘선, 신분당선));
 
         //then
         List<LineResponse> lines = lineService.findAllLines();
-        assertTrue(lines.contains(LineResponse.of(lineGreen)));
-        assertTrue(lines.contains(LineResponse.of(lineRed)));
+        assertTrue(lines.contains(LineResponse.of(경춘선)));
+        assertTrue(lines.contains(LineResponse.of(신분당선)));
     }
 
     @DisplayName("저장된 노선을 조회한다.")
     @Test
     void findLine() {
         //given
-        Line lineGreen = new Line("2호선", "green");
         Long id = 1L;
         //when
-        when(lineRepository.findById(id)).thenReturn(Optional.of(lineGreen));
+        when(lineRepository.findById(id)).thenReturn(Optional.of(경춘선));
 
         //then
-        assertEquals(LineResponse.of(lineGreen),lineService.findById(id));
+        assertEquals(LineResponse.of(경춘선), lineService.findById(id));
     }
 
     @DisplayName("저장되지 않은 노선을 조회한다.")
@@ -99,22 +111,22 @@ class LineServiceTest {
         when(lineRepository.findById(id)).thenReturn(Optional.empty());
 
         //then
-        assertThrows(LineNotExistedException.class, ()-> lineService.findById(id));
+        assertThrows(LineNotExistedException.class, () -> lineService.findById(id));
     }
 
     @DisplayName("노선을 업데이트 한다.")
     @Test
     void updateLine() {
         //given
-        Line lineGreen = new Line("2호선", "green");
+
         Long id = 1L;
-        LineRequest lineRequest = new LineRequest("1호선","orange");
+        LineRequest lineRequest = new LineRequest("1호선", "orange", 1L, 2L, 3);
         //when
-        when(lineRepository.findById(id)).thenReturn(Optional.of(lineGreen));
-        lineService.update(id,lineRequest);
+        when(lineRepository.findById(id)).thenReturn(Optional.of(경춘선));
+        lineService.update(id, lineRequest);
         //then
-        assertEquals("orange",lineGreen.getColor());
-        assertEquals("1호선",lineGreen.getName());
+        assertEquals("orange", 경춘선.getColor());
+        assertEquals("1호선", 경춘선.getName());
     }
 
     @DisplayName("존재하지 않는 노선을 업데이트 한다.")
@@ -122,11 +134,10 @@ class LineServiceTest {
     void updateNotExistedLine() {
         //given
         Long id = 1L;
-        LineRequest lineRequest = new LineRequest("1호선","orange");
         //when
         when(lineRepository.findById(id)).thenReturn(Optional.empty());
         //then
-        assertThrows(LineNotExistedException.class,()-> lineService.update(id,lineRequest));
+        assertThrows(LineNotExistedException.class, () -> lineService.update(id, 경춘선_요청));
     }
 
     @DisplayName("존재하지 않는 노선을 삭제한다.")
@@ -137,6 +148,6 @@ class LineServiceTest {
         //when
         when(lineRepository.findById(id)).thenReturn(Optional.empty());
         //then
-        assertThrows(LineNotExistedException.class,()-> lineService.delete(id));
+        assertThrows(LineNotExistedException.class, () -> lineService.delete(id));
     }
 }

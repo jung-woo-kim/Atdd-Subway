@@ -1,5 +1,7 @@
 package com.example.subway.station.dto;
 
+import com.example.subway.station.domain.Station;
+
 public class StationResponse {
     private Long id;
     private String name;
@@ -15,5 +17,9 @@ public class StationResponse {
 
     public String getName() {
         return name;
+    }
+
+    public static StationResponse of(Station station) {
+        return new StationResponse(station.getId(), station.getName());
     }
 }
