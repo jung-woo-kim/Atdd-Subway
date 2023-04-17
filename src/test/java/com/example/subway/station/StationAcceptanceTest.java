@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.subway.station.StationStep.*;
@@ -17,14 +16,13 @@ import static com.example.subway.station.StationStep.*;
  */
 @DisplayName("지하철역 관련 기능")
 public class StationAcceptanceTest extends AcceptanceTest {
-    private static Map<String, String> params;
-    private static final String 강남역 = "강남역";
-    private static final String 성수역 = "성수역";
+    private static Map<String, String> 강남역;
+    private static Map<String, String> 성수역;
 
     @BeforeAll
     public static void given() {
-        params = new HashMap<>();
-        params.put("name", 강남역);
+        강남역 = StationFixData.create_강남역();
+        성수역 = StationFixData.create_성수역();
     }
     /**
      * When 지하철역을 생성하면
@@ -35,15 +33,15 @@ public class StationAcceptanceTest extends AcceptanceTest {
     @Test
     void createStation() {
         // when
-        ExtractableResponse<Response> response = 지하철_역_생성(params);
+        ExtractableResponse<Response> response = 지하철_역_생성_요청(강남역);
 
         // then
         역_생성_확인(response);
 
         // then
-        ExtractableResponse<Response> readResponse = 지하철_역_목록_조회();
+        ExtractableResponse<Response> readResponse = 지하철_역_목록_조회_요청();
 
-        역_존재_확인(readResponse,강남역);
+        역_존재_확인(readResponse,StationFixData.강남역_이름);
     }
 
     /**
@@ -56,14 +54,12 @@ public class StationAcceptanceTest extends AcceptanceTest {
     @Test
     void readStation() {
         //given
-        역_생성_되어있음(params);
+        역_생성_되어있음(강남역);
 
-        to_성수역();
 
-        역_생성_되어있음(params);
-        to_강남역();
+        역_생성_되어있음(성수역);
         //when
-        ExtractableResponse<Response> response = 지하철_역_목록_조회();
+        ExtractableResponse<Response> response = 지하철_역_목록_조회_요청();
 
         //then
         역_목록_확인(response);
@@ -80,25 +76,16 @@ public class StationAcceptanceTest extends AcceptanceTest {
     @Test
     void deleteStation() {
         //given
-        역_생성_되어있음(params);
+        역_생성_되어있음(강남역);
 
         //when
-        지하철_역_삭제(1L);
+        지하철_역_삭제_요청(1L);
 
 
-        ExtractableResponse<Response> response = 지하철_역_목록_조회();
+        ExtractableResponse<Response> response = 지하철_역_목록_조회_요청();
 
         //then
-        역_미존재_확인(response, 강남역);
+        역_미존재_확인(response, StationFixData.강남역_이름);
     }
 
-    private void to_성수역() {
-        params = new HashMap<>();
-        params.put("name", 성수역);
-    }
-
-    private void to_강남역() {
-        params = new HashMap<>();
-        params.put("name", 강남역);
-    }
 }

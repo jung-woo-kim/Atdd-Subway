@@ -3,6 +3,7 @@ package com.example.subway.line.domain;
 import com.example.subway.common.BaseEntity;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,6 +18,9 @@ public class Line extends BaseEntity {
 
     @Column(length = 20, nullable = false)
     private String color;
+
+    @Embedded
+    Sections sections;
 
     public Line() {
     }

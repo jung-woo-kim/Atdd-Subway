@@ -22,21 +22,10 @@ public class LineAcceptanceTest extends AcceptanceTest {
     private static Map<String, String> 경춘선;
     private static Map<String, String> 신분당선;
 
-    private static final String 경춘 = "경춘선";
-    private static final String 초록색 = "green";
-    private static final String 신분당 = "신분당선";
-    private static final String 빨간색 = "red";
-
     @BeforeAll
     public static void given() {
-        경춘선 = new HashMap<>();
-        신분당선 = new HashMap<>();
-
-        경춘선.put("name", 경춘);
-        경춘선.put("color", 초록색);
-
-        신분당선.put("name", 신분당);
-        신분당선.put("color", 빨간색);
+        경춘선 = LineFixData.create_경춘선();
+        신분당선 = LineFixData.create_신분당선();
     }
 
     @DisplayName("지하철 노선을 생성한다.")
