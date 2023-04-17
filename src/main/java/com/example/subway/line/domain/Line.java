@@ -1,8 +1,10 @@
 package com.example.subway.line.domain;
 
 import com.example.subway.common.BaseEntity;
+import com.example.subway.station.domain.Station;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +20,9 @@ public class Line extends BaseEntity {
     @Column(length = 20, nullable = false)
     private String color;
 
+    @Embedded
+    Sections sections = new Sections();
+
     public Line() {
     }
 
@@ -25,6 +30,7 @@ public class Line extends BaseEntity {
         this.name = name;
         this.color = color;
     }
+
 
     public Long getId() {
         return Id;
@@ -36,6 +42,14 @@ public class Line extends BaseEntity {
 
     public String getColor() {
         return color;
+    }
+
+    public List<Section> getSections() {
+        return sections.getSections();
+    }
+
+    public void addSection(Station upStation, Station downStation, Line line, int distance) {
+        sections.addSection(upStation, downStation, line, distance);
     }
 
     public void update(String name, String color) {

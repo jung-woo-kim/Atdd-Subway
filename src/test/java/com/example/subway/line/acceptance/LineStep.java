@@ -11,26 +11,31 @@ import static com.example.subway.common.CommonRestAssured.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LineStep {
-    private static String path = "/lines";
+    private static final String PATH = "/lines";
+    private static final String NAME = "name";
+    private static final String COLOR = "color";
+    private static final String ERROR_CODE = "errorCode";
+
+
 
     public static ExtractableResponse<Response> 지하철_노선_생성_요청(Map<String, String> params) {
-        return post(path, params);
+        return post(PATH, params);
     }
 
     public static ExtractableResponse<Response> 지하철_노선_목록_조회_요청() {
-        return get(path);
+        return get(PATH);
     }
 
     public static ExtractableResponse<Response> 지하철_노선_조회_요청(Long id) {
-        return get(path, id);
+        return get(PATH, id);
     }
 
     public static ExtractableResponse<Response> 지하철_노선_수정_요청(Long id, Map<String, String> params ) {
-        return update(path, id, params);
+        return update(PATH, id, params);
     }
 
     public static ExtractableResponse<Response> 지하철_노선_제거_요청(Long id) {
-        return delete(path, id);
+        return delete(PATH, id);
     }
 
     public static void 노선_생성_확인(ExtractableResponse<Response> response, Map<String, String> params) {
@@ -39,13 +44,13 @@ public class LineStep {
     }
 
     public static void 노선_생성_값_확인(ExtractableResponse<Response> response, Map<String, String> params) {
-        assertEquals(params.get("name"), response.jsonPath().get("name").toString());
-        assertEquals(params.get("color"), response.jsonPath().get("color").toString());
+        assertEquals(params.get(NAME), response.jsonPath().get(NAME).toString());
+        assertEquals(params.get(COLOR), response.jsonPath().get(COLOR).toString());
     }
 
     public static void 노선_목록_확인(ExtractableResponse<Response> response) {
         요청_조회_확인(response);
-        assertEquals(2, response.jsonPath().getList("name", String.class).size());
+        assertEquals(2, response.jsonPath().getList(NAME, String.class).size());
     }
 
     public static void 노선_조회_확인(ExtractableResponse<Response> response, Map<String, String> params) {
@@ -55,7 +60,7 @@ public class LineStep {
 
     public static void 노선_이름_중복_실패_확인(ExtractableResponse<Response> response) {
         요청_BAD_확인(response);
-        assertEquals(LineExceptionType.LINE_DUPLICATE.getErrorCode(), (Integer) response.jsonPath().get("errorCode"));
+        assertEquals(LineExceptionType.LINE_DUPLICATE.getErrorCode(), (Integer) response.jsonPath().get(ERROR_CODE));
     }
 
     public static void 노선_없음_확인(ExtractableResponse<Response> response) {

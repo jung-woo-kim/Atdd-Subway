@@ -1,20 +1,19 @@
 package com.example.subway.line.acceptance;
 
 import com.example.subway.common.AcceptanceTest;
-import io.restassured.RestAssured;
+import com.example.subway.station.StationFixData;
+import com.example.subway.station.StationStep;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.subway.line.acceptance.LineStep.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("지하철 노선 관련 기능")
 public class LineAcceptanceTest extends AcceptanceTest {
@@ -22,21 +21,16 @@ public class LineAcceptanceTest extends AcceptanceTest {
     private static Map<String, String> 경춘선;
     private static Map<String, String> 신분당선;
 
-    private static final String 경춘 = "경춘선";
-    private static final String 초록색 = "green";
-    private static final String 신분당 = "신분당선";
-    private static final String 빨간색 = "red";
-
+    @BeforeEach
+    void setUP() {
+        super.setUp();
+        StationStep.역_생성_되어있음(StationFixData.create_강남역_params());
+        StationStep.역_생성_되어있음(StationFixData.create_성수역_params());
+    }
     @BeforeAll
     public static void given() {
-        경춘선 = new HashMap<>();
-        신분당선 = new HashMap<>();
-
-        경춘선.put("name", 경춘);
-        경춘선.put("color", 초록색);
-
-        신분당선.put("name", 신분당);
-        신분당선.put("color", 빨간색);
+        경춘선 = LineFixData.create_경춘선_params();
+        신분당선 = LineFixData.create_신분당선_params();
     }
 
     @DisplayName("지하철 노선을 생성한다.")

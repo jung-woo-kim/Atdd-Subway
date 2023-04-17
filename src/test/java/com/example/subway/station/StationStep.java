@@ -15,15 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class StationStep {
     private static final String path = "/stations";
 
-    public static ExtractableResponse<Response> 지하철_역_생성(Map<String, String> params) {
+    public static ExtractableResponse<Response> 지하철_역_생성_요청(Map<String, String> params) {
         return post(path, params);
     }
 
-    public static ExtractableResponse<Response> 지하철_역_목록_조회() {
+    public static ExtractableResponse<Response> 지하철_역_목록_조회_요청() {
         return get(path);
     }
 
-    public static void 지하철_역_삭제(Long id) {
+    public static void 지하철_역_삭제_요청(Long id) {
         delete(path, id);
     }
 
@@ -40,7 +40,7 @@ public class StationStep {
     }
 
     public static void 역_생성_되어있음(Map<String, String> params) {
-        지하철_역_생성(params);
+        지하철_역_생성_요청(params);
     }
 
     public static void 역_목록_확인(ExtractableResponse<Response> response) {

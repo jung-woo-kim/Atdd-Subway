@@ -29,6 +29,15 @@ public class CommonRestAssured {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> post(String path, Long id, Map<String, String> params) {
+        return RestAssured.given().log().all()
+                .body(params)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when().post(path + "/" + id)
+                .then().log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> update(String path, Long id, Map<String, String> params) {
         return RestAssured.given().log().all()
                 .body(params)
