@@ -1,6 +1,7 @@
 package com.example.subway.line.domain;
 
 import com.example.subway.common.BaseEntity;
+import com.example.subway.station.domain.Station;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -40,6 +41,10 @@ public class Line extends BaseEntity {
 
     public String getColor() {
         return color;
+    }
+
+    public void addSection(Station upStation, Station downStation, Line line, int distance) {
+        sections.addSection(upStation, downStation, line, distance);
     }
 
     public void update(String name, String color) {
