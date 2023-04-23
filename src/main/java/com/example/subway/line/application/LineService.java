@@ -11,7 +11,6 @@ import com.example.subway.line.exception.LineExceptionType;
 import com.example.subway.line.exception.LineNotExistedException;
 import com.example.subway.station.application.StationService;
 import com.example.subway.station.domain.Station;
-import com.example.subway.station.domain.StationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,11 +73,12 @@ public class LineService {
     }
 
     @Transactional
-    public void addSection(Long lineId, SectionRequest sectionRequest) {
+    public LineResponse addSection(Long lineId, SectionRequest sectionRequest) {
         Station upStation = stationService.findById(sectionRequest.getUpStationId());
         Station downStation = stationService.findById(sectionRequest.getDownStationId());
 
         Line line = lineRepository.findById(lineId).orElseThrow(() -> new LineNotExistedException(LineExceptionType.LINE_NOT_EXIST));
         line.addSection(upStation, downStation, line, sectionRequest.getDistance());
+        return LineResponse.of(line);
     }
 }

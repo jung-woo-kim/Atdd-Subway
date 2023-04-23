@@ -4,6 +4,7 @@ import com.example.subway.common.BaseEntity;
 import com.example.subway.station.domain.Station;
 import jakarta.persistence.*;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +20,10 @@ public class Line extends BaseEntity {
 
     @Column(length = 20, nullable = false)
     private String color;
+
+    LocalTime startTime;
+    LocalTime endTime;
+    int interValTime;
 
     @Embedded
     Sections sections = new Sections();
