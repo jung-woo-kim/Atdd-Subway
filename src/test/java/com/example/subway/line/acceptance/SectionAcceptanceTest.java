@@ -57,6 +57,19 @@ public class SectionAcceptanceTest extends AcceptanceTest {
         assertThat(response.jsonPath().getList("stations.id", Long.class)).containsExactly(강남역, 성수역, 정자역);
     }
 
+    @DisplayName("지하철 노선 중간에 구간을 등록")
+    @Test
+    void addLineSectionMiddle() {
+        // when
+        Long 정자역 = 지하철_역_생성_요청(create_정자역_params()).jsonPath().getLong("id");
+        지하철_노선에_지하철_구간_생성_요청(신분당선, createSectionCreateParams(강남역, 정자역));
+
+        // then
+        ExtractableResponse<Response> response = 지하철_노선_조회_요청(신분당선);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.jsonPath().getList("stations.id", Long.class)).containsExactly(강남역, 성수역, 정자역);
+    }
+
     /**
      * Given 지하철 노선에 새로운 구간 추가를 요청 하고
      * When 지하철 노선의 마지막 구간 제거를 요청 하면

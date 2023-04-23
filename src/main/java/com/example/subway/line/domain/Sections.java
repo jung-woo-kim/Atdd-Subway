@@ -15,7 +15,20 @@ public class Sections {
     List<Section> sections= new ArrayList<>();
 
     public void addSection(Station upStation, Station downStation, Line line, int distance) {
-        sections.add(Section.createSection(upStation, downStation, line, distance));
+        Section newSection = Section.createSection(upStation, downStation, line, distance);
+        if(isAddUpSection(upStation)) {
+
+        }
+        sections.add(newSection);
+    }
+
+    private boolean isAddUpSection(Station upStation) {
+        return sections.stream().anyMatch(section -> section.getUpStation().equals(upStation));
+    }
+
+    private void addUpSection(Section newSection) {
+        Section section = sections.stream().filter(s -> s.getUpStation().equals(newSection.getUpStation())).findFirst().orElseThrow();
+
     }
 
     public List<Section> getSections() {
