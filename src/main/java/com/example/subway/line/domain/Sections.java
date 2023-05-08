@@ -17,9 +17,18 @@ public class Sections {
     public void addSection(Station upStation, Station downStation, Line line, int distance) {
         Section newSection = Section.createSection(upStation, downStation, line, distance);
         if(isAddUpSection(upStation)) {
+            // (A B) (B D) -> + (A C) -> (A C) (C B) (B D)
+            //TODO : 상행 구간의 상행역을 downStation 으로 변경
+        }
+
+        if(isAddDownSection(downStation)) {
 
         }
         sections.add(newSection);
+    }
+
+    private boolean isAddDownSection(Station downStation) {
+        return sections.stream().anyMatch(section -> section.getDownStation().equals(downStation));
     }
 
     private boolean isAddUpSection(Station upStation) {
