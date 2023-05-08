@@ -22,10 +22,10 @@ public class Section {
 
     private int distance;
 
-    public Section() {
+    protected Section() {
     }
 
-    public Section(Station upStation, Station downStation, Line line, int distance) {
+    private Section(Station upStation, Station downStation, Line line, int distance) {
         this.upStation = upStation;
         this.downStation = downStation;
         this.line = line;
