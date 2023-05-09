@@ -3,6 +3,7 @@ package com.example.subway.line.domain;
 import com.example.subway.line.acceptance.LineFixData;
 import com.example.subway.line.acceptance.SectionFixData;
 import com.example.subway.line.exception.section.SectionDuplicateException;
+import com.example.subway.line.exception.section.SectionMinimumSizeException;
 import com.example.subway.line.exception.section.SectionNotExistedException;
 import com.example.subway.line.exception.section.SectionNotLastStationException;
 import com.example.subway.station.StationFixData;
@@ -37,6 +38,13 @@ class SectionsTest {
     void 하행선_이미_등록() {
         assertThrows(SectionDuplicateException.class,() ->sections.addSection(SectionFixData.성수_강남()));
     }
+
+    @Test
+    void 역_최소_삭제_실패() {
+        assertThrows(SectionMinimumSizeException.class,() -> sections.deleteStation(create_성수역()));
+    }
+
+
 //    @Test
 //    void 상행선_이미_등록() {
 //        assertThrows(SectionNotExistedException.class, () -> sections.addSection(Section.createSection(create_강남역(), create_정자역(), LineFixData.createLine_경춘선(), 0)));

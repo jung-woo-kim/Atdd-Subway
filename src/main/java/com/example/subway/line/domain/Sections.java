@@ -13,7 +13,7 @@ import java.util.List;
 
 @Embeddable
 public class Sections {
-    private static final int MINIMUM_SIZE = 2;
+    private static final int MINIMUM_SIZE = 1;
 
     @OneToMany(mappedBy = "line", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Section> sections= new ArrayList<>();
