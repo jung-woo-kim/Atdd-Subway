@@ -54,7 +54,7 @@ public class Line extends BaseEntity {
     }
 
     public void addSection(Station upStation, Station downStation, Line line, int distance) {
-        sections.addSection(upStation, downStation, line, distance);
+        sections.addSection(Section.createSection(upStation, downStation, line, distance));
     }
 
     public void update(String name, String color) {

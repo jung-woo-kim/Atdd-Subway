@@ -1,8 +1,8 @@
 package com.example.subway.line.domain;
 
 import com.example.subway.line.exception.section.SectionDuplicateException;
-import com.example.subway.line.exception.section.SectionExceptionType;
-import com.example.subway.line.exception.section.SectionNotExistedException;
+import com.example.subway.line.exception.section.SectionMinimumSizeException;
+import com.example.subway.line.exception.section.SectionNotLastStationException;
 import com.example.subway.station.domain.Station;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
@@ -13,68 +13,77 @@ import java.util.List;
 
 @Embeddable
 public class Sections {
+    private static final int MINIMUM_SIZE = 2;
 
     @OneToMany(mappedBy = "line", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    List<Section> sections= new ArrayList<>();
+    private List<Section> sections= new ArrayList<>();
 
-    public void addSection(Station upStation, Station downStation, Line line, int distance) {
-        Section newSection = Section.createSection(upStation, downStation, line, distance);
-        boolean addUpSection = isAddUpSection(upStation);
-        boolean addDownSection = isAddDownSection(downStation);
+    public void addSection(Section section) {
+        validationSectionStation(section);
 
-        validateSection(addUpSection, addDownSection);
-
-        if(addUpSection) {
-            // (A B) (B D) -> + (A C) -> (A C) (C B) (B D)
-            //TODO : 상행 구간의 상행역을 downStation 으로 변경
-            addUpSection(newSection);
-            return;
-        }
-
-        if(addDownSection) {
-            // (A B) (B D) -> + (C B) -> (A C) (C B) (B D)
-            //TODO : 상행 구간의 하행역을 upStation 으로 변경
-            addDownSection(newSection);
-            return;
-        }
-        sections.add(newSection);
+        sections.add(section);
     }
 
-    private boolean isAddDownSection(Station downStation) {
-        return sections.stream().anyMatch(section -> section.matchDownStation(downStation));
+    public List<Station> getStations() {
+        List<Station> result = new ArrayList<>();
+        if (sections.size() > 0) {
+            sections.forEach(sec
+                    -> result.add(sec.getUpStation()));
+            result.add(sections.get(sections.size() - 1).getDownStation());
+        }
+        return result;
     }
 
-    private boolean isAddUpSection(Station upStation) {
-        return sections.stream().anyMatch(section -> section.matchUpStation(upStation));
-    }
-
-    private void addUpSection(Section newSection) {
-        Section section = sections.stream().filter(s -> s.matchUpStation(newSection.getUpStation())).findFirst().orElseThrow();
-        section.setUpStation(newSection.getDownStation());
-        sections.add(newSection);
-    }
-
-    private void addDownSection(Section newSection) {
-        Section section = sections.stream().filter(s -> s.matchDownStation(newSection.getUpStation())).findFirst().orElseThrow();
-        section.setDownStation(newSection.getUpStation());
-        sections.add(newSection);
-    }
-
-    private void validateSection(boolean addUpSection, boolean addDownSection) {
-        if (sections.isEmpty()) {
-            return;
+    private void validationSectionStation(Section section) {
+        if (!matchDownStation(section.getUpStation())) {
+            throw new SectionNotLastStationException();
         }
 
-        if (addUpSection && addDownSection) {
-            throw new SectionDuplicateException(SectionExceptionType.SECTION_DUPLICATE);
+        if (matchAllStation(section.getDownStation())) {
+            throw new SectionDuplicateException();
+        }
+    }
+
+    public void deleteStation(Station station) {
+        validationDeleteStation(station);
+        Section lastSection = sections.get(lastIndex());
+        sections.remove(lastSection);
+    }
+
+    private void validationDeleteStation(Station station) {
+        if (!isLastDownStation(station)) {
+            throw new SectionNotLastStationException();
         }
 
-        if (!addUpSection && ! addDownSection) {
-            throw new SectionNotExistedException(SectionExceptionType.SECTION_NOT_EXIST);
+        if (isMinimumSectionSize()) {
+            throw new SectionMinimumSizeException();
         }
+    }
+
+    private boolean isMinimumSectionSize() {
+        return sections.size() == MINIMUM_SIZE;
+    }
+
+    private boolean isLastDownStation(Station station) {
+        return sections.get(lastIndex()).getDownStation().equals(station);
+    }
+
+    private int lastIndex() {
+        return sections.size() - 1;
+    }
+
+    private boolean matchDownStation(Station station) {
+        return sections.size() == 0
+                || isLastDownStation(station);
+    }
+
+    private boolean matchAllStation(Station station) {
+        return sections.stream()
+                .anyMatch(sec -> sec.matchAllStation(station));
     }
 
     public List<Section> getSections() {
         return sections;
     }
 }
+

@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 
 public enum SectionExceptionType implements BaseExceptionType {
     SECTION_DUPLICATE(1001, HttpStatus.BAD_REQUEST.value(), "이미 해당하는 상행역, 하행역이 존재합니다."),
-    SECTION_NOT_EXIST(1002,HttpStatus.NOT_FOUND.value(), "상행역 하행역이 존재하지 않습니다.");
+    SECTION_NOT_EXIST(1002,HttpStatus.NOT_FOUND.value(), "상행역 하행역이 존재하지 않습니다."),
+    SECTION_NOT_LAST_STATION(1003, HttpStatus.BAD_REQUEST.value(), "마지막 구간이 아닙니다."),
+    SECTION_MINIMUM_SIZE(1004, HttpStatus.BAD_REQUEST.value(), "구간이 현재 최소 크기입니다.");
 
     private final int errorCode;
     private final int httpStatus;

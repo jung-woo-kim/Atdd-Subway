@@ -3,6 +3,8 @@ package com.example.subway.line.domain;
 import com.example.subway.station.domain.Station;
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 public class Section {
 
@@ -71,4 +73,23 @@ public class Section {
     public static Section createSection(Station upStation, Station downStation, Line line, int distance) {
         return new Section(upStation, downStation, line, distance);
     }
+
+    public boolean matchAllStation(Station station) {
+        return upStation.equals(station) || downStation.equals(station);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Section section = (Section) o;
+        return getDistance() == section.getDistance() && Objects.equals(getId(), section.getId()) && Objects.equals(getUpStation(), section.getUpStation()) && Objects.equals(getDownStation(), section.getDownStation()) && Objects.equals(getLine(), section.getLine());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getUpStation(), getDownStation(), getLine(), getDistance());
+    }
+
+
 }
