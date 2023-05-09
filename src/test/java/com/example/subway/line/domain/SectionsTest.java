@@ -1,17 +1,15 @@
 package com.example.subway.line.domain;
 
-import com.example.subway.line.acceptance.LineFixData;
 import com.example.subway.line.acceptance.SectionFixData;
 import com.example.subway.line.exception.section.SectionDuplicateException;
 import com.example.subway.line.exception.section.SectionMinimumSizeException;
-import com.example.subway.line.exception.section.SectionNotExistedException;
 import com.example.subway.line.exception.section.SectionNotLastStationException;
-import com.example.subway.station.StationFixData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.example.subway.station.StationFixData.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SectionsTest {
 
@@ -44,6 +42,17 @@ class SectionsTest {
         assertThrows(SectionMinimumSizeException.class,() -> sections.deleteStation(create_성수역()));
     }
 
+    @Test
+    void 역_삭제() {
+        sections.addSection(SectionFixData.성수_정자());
+        sections.deleteStation(create_정자역());
+        assertEquals(sections.getStations().get(sections.getStations().size()-1), create_성수역());
+    }
+
+    @Test
+    void 역_가장_하행선_아님_실패() {
+        assertThrows(SectionNotLastStationException.class,() -> sections.deleteStation(create_강남역()));
+    }
 
 //    @Test
 //    void 상행선_이미_등록() {
