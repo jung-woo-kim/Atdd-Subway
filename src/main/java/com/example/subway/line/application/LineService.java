@@ -36,7 +36,7 @@ public class LineService {
         if (request.getUpStationId() != null && request.getDownStationId() != null && request.getDistance() != 0) {
             Station upStation = stationService.findById(request.getUpStationId());
             Station downStation = stationService.findById(request.getDownStationId());
-            line.getSections().add(new Section(upStation, downStation, line, request.getDistance()));
+            line.addSection(Section.createSection(upStation, downStation, line, request.getDistance()));
         }
 
         return LineResponse.of(line);
@@ -78,7 +78,14 @@ public class LineService {
         Station downStation = stationService.findById(sectionRequest.getDownStationId());
 
         Line line = lineRepository.findById(lineId).orElseThrow(() -> new LineNotExistedException(LineExceptionType.LINE_NOT_EXIST));
-        line.addSection(upStation, downStation, line, sectionRequest.getDistance());
+        line.addSection(Section.createSection(upStation, downStation, line, sectionRequest.getDistance()));
         return LineResponse.of(line);
+    }
+
+    @Transactional
+    public void deleteSectionById(Long id, Long stationId) {
+        Line line = lineRepository.findById(id).orElseThrow(() -> new LineNotExistedException(LineExceptionType.LINE_NOT_EXIST));
+        Station station = stationService.findById(stationId);
+        line.deleteSection(station);
     }
 }

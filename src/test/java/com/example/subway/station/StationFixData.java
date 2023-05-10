@@ -13,6 +13,8 @@ public class StationFixData {
     public static final String 강남역_이름 = "강남역";
     private static final String 성수역_이름 = "성수역";
     private static final String 정자역_이름 = "정자역";
+    private static final String 왕십리역_이름 = "왕십리역";
+
 
     public static Station create_강남역() {
         return new Station(강남역_이름);
@@ -24,6 +26,9 @@ public class StationFixData {
 
     public static Station create_정자역() {
         return new Station(정자역_이름);
+    }
+    public static Station create_왕십리역() {
+        return new Station(왕십리역_이름);
     }
 
 

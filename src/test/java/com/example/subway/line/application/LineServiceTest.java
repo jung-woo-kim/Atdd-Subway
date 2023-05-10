@@ -54,7 +54,7 @@ class LineServiceTest {
         //when
         when(stationService.findById(1L)).thenReturn(StationFixData.create_강남역());
         when(stationService.findById(2L)).thenReturn(StationFixData.create_성수역());
-        when(lineRepository.save(경춘선)).thenReturn(경춘선);
+        when(lineRepository.save(경춘선)).thenReturn(createEmptyLine_경춘선());
 
         //then
         LineResponse lineResponse = lineService.saveLine(경춘선_요청);
@@ -68,7 +68,7 @@ class LineServiceTest {
         //when
         when(stationService.findById(1L)).thenReturn(StationFixData.create_강남역());
         when(stationService.findById(2L)).thenReturn(StationFixData.create_성수역());
-        when(lineRepository.save(경춘선)).thenReturn(경춘선);
+        when(lineRepository.save(경춘선)).thenReturn(createEmptyLine_경춘선());
 
         lineService.saveLine(경춘선_요청);
         when(lineRepository.findByName(경춘)).thenReturn(createLine_경춘선());
