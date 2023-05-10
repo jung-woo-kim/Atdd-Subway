@@ -24,6 +24,10 @@ public class LineFixData {
         return line;
     }
 
+    public static Line createEmptyLine_경춘선() {
+        return new Line(경춘, 초록색);
+    }
+
     public static Line createLine_신분당() {
         Line line = new Line(신분당, 빨간색);
         line.addSection(Section.createSection(StationFixData.create_강남역(),StationFixData.create_성수역(),line,distance));

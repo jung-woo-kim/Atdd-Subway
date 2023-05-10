@@ -35,6 +35,9 @@ public class Sections {
     }
 
     private void validationSectionStation(Section section) {
+        if (sections.isEmpty()) {
+            return;
+        }
         if (!matchDownStation(section.getUpStation())) {
             throw new SectionNotLastStationException();
         }
