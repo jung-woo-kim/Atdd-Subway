@@ -47,7 +47,11 @@ public class Sections {
     public void deleteStation(Station station) {
         validationDeleteStation(station);
         Section lastSection = sections.get(lastIndex());
+        System.out.println(sections);
+        System.out.println(station);
+        System.out.println("------------------------------------------------------------------");
         sections.remove(lastSection);
+        System.out.println(sections);
     }
 
     private void validationDeleteStation(Station station) {

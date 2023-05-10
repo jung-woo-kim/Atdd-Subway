@@ -1,6 +1,7 @@
 package com.example.subway.line.acceptance;
 
 import com.example.subway.line.domain.Line;
+import com.example.subway.line.domain.Section;
 import com.example.subway.line.dto.LineRequest;
 import com.example.subway.station.StationFixData;
 
@@ -19,13 +20,13 @@ public class LineFixData {
 
     public static Line createLine_경춘선() {
         Line line = new Line(경춘, 초록색);
-        line.addSection(StationFixData.create_강남역(),StationFixData.create_성수역(),line,distance);
+        line.addSection(Section.createSection(StationFixData.create_강남역(),StationFixData.create_성수역(),line,distance));
         return line;
     }
 
     public static Line createLine_신분당() {
         Line line = new Line(신분당, 빨간색);
-        line.addSection(StationFixData.create_강남역(),StationFixData.create_정자역(),line,distance);
+        line.addSection(Section.createSection(StationFixData.create_강남역(),StationFixData.create_성수역(),line,distance));
         return line;
     }
 
