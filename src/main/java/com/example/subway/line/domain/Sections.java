@@ -10,6 +10,7 @@ import jakarta.persistence.OneToMany;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Embeddable
 public class Sections {
@@ -26,11 +27,20 @@ public class Sections {
 
     public List<Station> getStations() {
         List<Station> result = new ArrayList<>();
-        if (sections.size() > 0) {
-            sections.forEach(sec
-                    -> result.add(sec.getUpStation()));
-            result.add(sections.get(sections.size() - 1).getDownStation());
+        Optional<Section> section = getFirstSection();
+
+        if (section.isEmpty()) {
+            return result;
         }
+        Section tempSection = section.get();
+        result.add(tempSection.getUpStation());
+
+        while (section.isPresent()) {
+            tempSection = section.get();
+            result.add(tempSection.getDownStation());
+            section = getNextSection(tempSection);
+        }
+
         return result;
     }
 
@@ -50,11 +60,7 @@ public class Sections {
     public void deleteStation(Station station) {
         validationDeleteStation(station);
         Section lastSection = sections.get(lastIndex());
-        System.out.println(sections);
-        System.out.println(station);
-        System.out.println("------------------------------------------------------------------");
         sections.remove(lastSection);
-        System.out.println(sections);
     }
 
     private void validationDeleteStation(Station station) {
@@ -72,7 +78,7 @@ public class Sections {
     }
 
     private boolean isLastDownStation(Station station) {
-        return sections.get(lastIndex()).getDownStation().equals(station);
+        return sections.stream().noneMatch(section -> section.matchUpStation(station));
     }
 
     private int lastIndex() {
@@ -87,6 +93,14 @@ public class Sections {
     private boolean matchAllStation(Station station) {
         return sections.stream()
                 .anyMatch(sec -> sec.matchAllStation(station));
+    }
+
+    private Optional<Section> getFirstSection() {
+        return sections.stream().filter(section -> sections.stream().noneMatch(compareSection -> compareSection.matchDownStation(section.getUpStation()))).findFirst();
+    }
+
+    private Optional<Section> getNextSection(Section section) {
+        return sections.stream().filter(compareSection -> section.matchDownStation(compareSection.getUpStation())).findFirst();
     }
 
     public List<Section> getSections() {
