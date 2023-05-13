@@ -78,10 +78,7 @@ public class Sections {
         result.add(section.getDownStation());
         Optional<Section> downSection = getNextDownSection(section);
 
-        System.out.println(sections.size());
-        System.out.println(downSection.isPresent());
         while (downSection.isPresent()) {
-            System.out.println("??");
             section = downSection.get();
             result.add(section.getDownStation());
             downSection = getNextDownSection(section);
