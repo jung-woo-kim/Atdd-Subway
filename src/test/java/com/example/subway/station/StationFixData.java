@@ -17,18 +17,18 @@ public class StationFixData {
 
 
     public static Station create_강남역() {
-        return new Station(강남역_이름);
+        return new Station(1L,강남역_이름);
     }
 
     public static Station create_성수역() {
-        return new Station(성수역_이름);
+        return new Station(2L, 성수역_이름);
     }
 
     public static Station create_정자역() {
-        return new Station(정자역_이름);
+        return new Station(3L, 정자역_이름);
     }
     public static Station create_왕십리역() {
-        return new Station(왕십리역_이름);
+        return new Station(4L, 왕십리역_이름);
     }
 
 

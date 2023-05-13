@@ -29,10 +29,6 @@ class SectionsTest {
         assertEquals(sections.getStations().get(sections.getStations().size()-1), create_정자역());
     }
 
-    @Test
-    void 가장_하행선_등록이_아님() {
-        assertThrows(SectionNotLastStationException.class,()->sections.addSection(SectionFixData.강남_왕십리()));
-    }
 
     @Test
     void 하행선_이미_등록() {
@@ -59,7 +55,14 @@ class SectionsTest {
     @Test
     void 노선_순서대로_조회() {
         sections.addSection(SectionFixData.성수_정자());
-        assertThat(sections.getStations().stream().map(Station::getName)).containsExactly(강남역_이름, 성수역_이름, 정자역_이름);
+        sections.addSection(SectionFixData.성수_왕십리());
+        assertThat(sections.getStations().stream().map(Station::getName)).containsExactly(강남역_이름, 성수역_이름,왕십리역_이름, 정자역_이름);
+    }
+
+    @Test
+    void 역_중간에_등록() {
+        sections.addSection(SectionFixData.강남_왕십리());
+        assertThat(sections.getStations().stream().map(Station::getName)).containsExactly(강남역_이름, 왕십리역_이름, 성수역_이름);
 
     }
 

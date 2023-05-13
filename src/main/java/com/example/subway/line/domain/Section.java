@@ -42,12 +42,8 @@ public class Section {
         return downStation.equals(this.downStation);
     }
 
-    public void setUpStation(Station upStation) {
-        this.upStation = upStation;
-    }
-
-    public void setDownStation(Station downStation) {
-        this.downStation = downStation;
+    public boolean matchAllStation(Station station) {
+        return upStation.equals(station) || downStation.equals(station);
     }
 
     public Long getId() {
@@ -74,9 +70,15 @@ public class Section {
         return new Section(upStation, downStation, line, distance);
     }
 
-    public boolean matchAllStation(Station station) {
-        return upStation.equals(station) || downStation.equals(station);
+    public void setUpStation(Station upStation) {
+        this.upStation = upStation;
     }
+
+    public void setDownStation(Station downStation) {
+        this.downStation = downStation;
+    }
+
+
 
     @Override
     public boolean equals(Object o) {

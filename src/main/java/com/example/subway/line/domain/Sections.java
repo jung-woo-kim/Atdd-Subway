@@ -2,6 +2,7 @@ package com.example.subway.line.domain;
 
 import com.example.subway.line.exception.section.SectionDuplicateException;
 import com.example.subway.line.exception.section.SectionMinimumSizeException;
+import com.example.subway.line.exception.section.SectionNotExistedException;
 import com.example.subway.line.exception.section.SectionNotLastStationException;
 import com.example.subway.station.domain.Station;
 import jakarta.persistence.CascadeType;
@@ -19,43 +20,77 @@ public class Sections {
     @OneToMany(mappedBy = "line", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Section> sections= new ArrayList<>();
 
-    public void addSection(Section section) {
-        validationSectionStation(section);
 
+    public void addSection(Section section) {
+        // 역 사이에 끼는 경우인지 체크
+        Optional<Section> upSectionOptional = anyMatchUpStation(section.getUpStation());
+        Optional<Section> downSectionOptional = anyMatchDownStation(section.getDownStation());
+
+        validateAddSection(section);
+
+        upSectionOptional.ifPresent(upSection -> changeMatchedUpSection(section, upSection));
+        downSectionOptional.ifPresent(downSection -> changeMatchedDownSection(section, downSection));
         sections.add(section);
+    }
+
+    private void changeMatchedDownSection(Section section, Section matchedSection) {
+        matchedSection.setDownStation(section.getUpStation());
+    }
+
+    private void changeMatchedUpSection(Section section, Section matchedSection) {
+        matchedSection.setUpStation(section.getDownStation());
+    }
+
+    private void validateAddSection(Section section) {
+        if (sections.isEmpty()) {
+            return;
+        }
+
+        boolean hasMatchedUpStation = anyMatchInSections(section.getUpStation());
+        boolean hasMatchedDownStation = anyMatchInSections(section.getDownStation());
+
+        if (hasMatchedUpStation && hasMatchedDownStation) {
+            throw new SectionDuplicateException();
+        }
+
+        if (!hasMatchedDownStation && !hasMatchedUpStation) {
+            throw new SectionNotExistedException();
+        }
+
+    }
+
+    private boolean anyMatchInSections(Station station) {
+        return sections.stream().anyMatch(section -> section.matchAllStation(station));
+    }
+
+    private Optional<Section> anyMatchDownStation(Station downStation) {
+        return sections.stream().filter(compareSection -> compareSection.matchDownStation(downStation)).findFirst();
+    }
+
+    private Optional<Section> anyMatchUpStation(Station upStation) {
+        return sections.stream().filter(compareSection -> compareSection.matchUpStation(upStation)).findFirst();
     }
 
     public List<Station> getStations() {
         List<Station> result = new ArrayList<>();
-        Optional<Section> section = getFirstSection();
+        Section section = geLastUpSection();
+        result.add(section.getUpStation());
+        result.add(section.getDownStation());
+        Optional<Section> downSection = getNextDownSection(section);
 
-        if (section.isEmpty()) {
-            return result;
-        }
-        Section tempSection = section.get();
-        result.add(tempSection.getUpStation());
-
-        while (section.isPresent()) {
-            tempSection = section.get();
-            result.add(tempSection.getDownStation());
-            section = getNextSection(tempSection);
+        System.out.println(sections.size());
+        System.out.println(downSection.isPresent());
+        while (downSection.isPresent()) {
+            System.out.println("??");
+            section = downSection.get();
+            result.add(section.getDownStation());
+            downSection = getNextDownSection(section);
         }
 
         return result;
     }
 
-    private void validationSectionStation(Section section) {
-        if (sections.isEmpty()) {
-            return;
-        }
-        if (!matchDownStation(section.getUpStation())) {
-            throw new SectionNotLastStationException();
-        }
 
-        if (matchAllStation(section.getDownStation())) {
-            throw new SectionDuplicateException();
-        }
-    }
 
     public void deleteStation(Station station) {
         validationDeleteStation(station);
@@ -85,22 +120,20 @@ public class Sections {
         return sections.size() - 1;
     }
 
-    private boolean matchDownStation(Station station) {
-        return sections.size() == 0
-                || isLastDownStation(station);
+    private Section geLastUpSection() {
+        return sections.stream().filter(section -> sections.stream().noneMatch(compareSection -> compareSection.matchDownStation(section.getUpStation()))).findFirst().orElseThrow(SectionMinimumSizeException::new);
     }
 
-    private boolean matchAllStation(Station station) {
-        return sections.stream()
-                .anyMatch(sec -> sec.matchAllStation(station));
+    private Section getLastDownSection() {
+        return sections.stream().filter(this::isLastSection).findFirst().orElseThrow(SectionMinimumSizeException::new);
     }
 
-    private Optional<Section> getFirstSection() {
-        return sections.stream().filter(section -> sections.stream().noneMatch(compareSection -> compareSection.matchDownStation(section.getUpStation()))).findFirst();
-    }
-
-    private Optional<Section> getNextSection(Section section) {
+    private Optional<Section> getNextDownSection(Section section) {
         return sections.stream().filter(compareSection -> section.matchDownStation(compareSection.getUpStation())).findFirst();
+    }
+
+    private boolean isLastSection(Section section) {
+        return getNextDownSection(section).isEmpty();
     }
 
     public List<Section> getSections() {
