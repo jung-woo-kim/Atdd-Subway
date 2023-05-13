@@ -11,24 +11,24 @@ public class StationFixData {
     private static final Map<String, String> 정자역 = new HashMap<>();
 
     public static final String 강남역_이름 = "강남역";
-    private static final String 성수역_이름 = "성수역";
-    private static final String 정자역_이름 = "정자역";
-    private static final String 왕십리역_이름 = "왕십리역";
+    public static final String 성수역_이름 = "성수역";
+    public static final String 정자역_이름 = "정자역";
+    public static final String 왕십리역_이름 = "왕십리역";
 
 
     public static Station create_강남역() {
-        return new Station(강남역_이름);
+        return new Station(1L,강남역_이름);
     }
 
     public static Station create_성수역() {
-        return new Station(성수역_이름);
+        return new Station(2L, 성수역_이름);
     }
 
     public static Station create_정자역() {
-        return new Station(정자역_이름);
+        return new Station(3L, 정자역_이름);
     }
     public static Station create_왕십리역() {
-        return new Station(왕십리역_이름);
+        return new Station(4L, 왕십리역_이름);
     }
 
 

@@ -69,8 +69,9 @@ public class Line extends BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Line line = (Line) o;
+        if (!(o instanceof Line line)) {
+            return false;
+        }
         return Objects.equals(getName(), line.getName()) && Objects.equals(getColor(), line.getColor());
     }
 
