@@ -4,6 +4,8 @@ package com.example.subway.line.domain;
 import com.example.subway.line.exception.section.*;
 
 import com.example.subway.station.domain.Station;
+import com.example.subway.station.exception.StationExceptionType;
+import com.example.subway.station.exception.StationNotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
@@ -99,19 +101,44 @@ public class Sections {
     }
 
 
+    // (A B) (B D) -> B -> B D 삭제, A D
     public void deleteStation(Station station) {
-        validationDeleteStation(station);
-        Section lastSection = sections.get(lastIndex());
-        sections.remove(lastSection);
-    }
+        Optional<Section> upSectionOptional = anyMatchDownStation(station);
+        Optional<Section> downSectionOptional = anyMatchUpStation(station);
 
-    private void validationDeleteStation(Station station) {
-        if (!isLastDownStation(station)) {
-            throw new SectionNotLastStationException();
+        validateDeleteStation(upSectionOptional.isPresent(), downSectionOptional.isPresent());
+
+        if (upSectionOptional.isPresent() && downSectionOptional.isPresent()) {
+            Section upSection = upSectionOptional.get();
+            Section downSection = downSectionOptional.get();
+            upSection.setDistance(downSection.getDistance() + upSection.getDistance());
+            upSection.setDownStation(downSection.getDownStation());
+            sections.remove(downSection);
+            return;
         }
 
+        if (upSectionOptional.isPresent()) {
+            Section upSection = upSectionOptional.get();
+            sections.remove(upSection);
+            return;
+        }
+
+        if (downSectionOptional.isPresent()) {
+            Section downSection = downSectionOptional.get();
+            sections.remove(downSection);
+            return;
+        }
+
+        throw new SectionNotExistedException();
+    }
+
+    private void validateDeleteStation(boolean isMatchUpSection, boolean isMatchDownSection) {
         if (isMinimumSectionSize()) {
             throw new SectionMinimumSizeException();
+        }
+
+        if (!isMatchDownSection && !isMatchUpSection) {
+            throw new StationNotFoundException(StationExceptionType.STATION_NOT_EXIST);
         }
     }
 
@@ -123,9 +150,6 @@ public class Sections {
         return sections.stream().noneMatch(section -> section.matchUpStation(station));
     }
 
-    private int lastIndex() {
-        return sections.size() - 1;
-    }
 
     private Section geLastUpSection() {
         return sections.stream().filter(section -> sections.stream().noneMatch(compareSection -> compareSection.matchDownStation(section.getUpStation()))).findFirst().orElseThrow(SectionMinimumSizeException::new);
