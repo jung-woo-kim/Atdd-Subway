@@ -1,9 +1,14 @@
 package com.example.subway.line.domain;
 
 import com.example.subway.station.domain.Station;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubwayMapTest {
@@ -34,5 +39,27 @@ class SubwayMapTest {
 
     @Test
     void findPath() {
+        // given
+        List<Line> lines = Lists.newArrayList(신분당선, 이호선, 삼호선);
+        SubwayMap subwayMap = new SubwayMap(lines);
+
+        // when
+        Path path = subwayMap.findPath(교대역, 양재역);
+
+        // then
+        assertThat(path.getStations()).containsExactlyElementsOf(Lists.newArrayList(교대역, 강남역, 양재역));
+    }
+
+    @Test
+    void findPathOppositely() {
+        // given
+        List<Line> lines = Lists.newArrayList(신분당선, 이호선, 삼호선);
+        SubwayMap subwayMap = new SubwayMap(lines);
+
+        // when
+        Path path = subwayMap.findPath(양재역, 교대역);
+
+        // then
+        assertThat(path.getStations()).containsExactlyElementsOf(Lists.newArrayList(양재역, 강남역, 교대역));
     }
 }

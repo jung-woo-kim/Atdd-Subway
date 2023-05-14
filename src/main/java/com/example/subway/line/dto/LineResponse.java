@@ -64,11 +64,11 @@ public class LineResponse {
     }
 
     private static List<StationResponse> createStationResponses(Line line) {
-        if (line.getSections().getSections().isEmpty()) {
+        if (line.getSections().isEmpty()) {
             return Collections.emptyList();
         }
 
-        return line.getSections().getStations()
+        return line.getStations()
                 .stream()
                 .map(StationResponse::of)
                 .collect(Collectors.toList());
