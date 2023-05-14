@@ -1,9 +1,6 @@
 package com.example.subway.line.domain;
 
-import com.example.subway.line.exception.section.SectionDuplicateException;
-import com.example.subway.line.exception.section.SectionMinimumSizeException;
-import com.example.subway.line.exception.section.SectionNotExistedException;
-import com.example.subway.line.exception.section.SectionNotLastStationException;
+import com.example.subway.line.exception.section.*;
 import com.example.subway.station.domain.Station;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
@@ -34,7 +31,14 @@ public class Sections {
     }
 
     private void changeMatchedDownSection(Section section, Section matchedSection) {
+        validateMatchedSection(section, matchedSection);
         matchedSection.setDownStation(section.getUpStation());
+    }
+
+    private void validateMatchedSection(Section section, Section matchedSection) {
+        if (section.getDistance() >= matchedSection.getDistance()) {
+            throw new SectionDistanceExceedException();
+        }
     }
 
     private void changeMatchedUpSection(Section section, Section matchedSection) {
