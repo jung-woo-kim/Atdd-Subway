@@ -1,6 +1,7 @@
 package com.example.subway.line.domain;
 
 import com.example.subway.line.acceptance.SectionFixData;
+import com.example.subway.line.exception.section.SectionDistanceExceedException;
 import com.example.subway.line.exception.section.SectionDuplicateException;
 import com.example.subway.line.exception.section.SectionMinimumSizeException;
 import com.example.subway.line.exception.section.SectionNotLastStationException;
@@ -16,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class SectionsTest {
 
     private Sections sections;
-
+    private final Section section = SectionFixData.강남_성수();
     @BeforeEach
     void setUp() {
         sections = new Sections();
-        sections.addSection(SectionFixData.강남_성수());
+        sections.addSection(section);
     }
 
     @Test
@@ -60,46 +61,21 @@ class SectionsTest {
     }
 
     @Test
-    void 역_중간에_등록() {
+    void 역_중간_등록() {
         sections.addSection(SectionFixData.강남_왕십리());
         assertThat(sections.getStations().stream().map(Station::getName)).containsExactly(강남역_이름, 왕십리역_이름, 성수역_이름);
-
     }
 
-//    @Test
-//    void 상행선_이미_등록() {
-//        assertThrows(SectionNotExistedException.class, () -> sections.addSection(Section.createSection(create_강남역(), create_정자역(), LineFixData.createLine_경춘선(), 0)));
-//    }
-//
-//    @Test
-//    void 하행선_이미_등록() {
-//        assertThrows(SectionNotExistedException.class, () -> sections.addSection(Section.createSection(create_정자역(), create_성수역(), LineFixData.createLine_경춘선(), 0)));
-//    }
-//    @Test
-//    void 가장_상행선_등록() {
-//        sections.addSection(create_정자역(), create_강남역(), LineFixData.createLine_경춘선(), 0);
-//        assertTrue(sections.getSections().contains(Section.createSection(create_정자역(), create_강남역(), LineFixData.createLine_경춘선(), 0)));
-//    }
-//
-//    @Test
-//    void 중간_상행선_등록() {
-//        // 강남 성수 정자
-//        sections.addSection(create_성수역(), create_정자역(), LineFixData.createLine_경춘선(), 0);
-//        // 강남 왕십리 성수 정자
-//        sections.addSection(create_왕십리역(), create_성수역(), LineFixData.createLine_경춘선(), 0);
-//
-//        assertTrue(sections.getSections().contains(Section.createSection(create_왕십리역(), create_성수역(), LineFixData.createLine_경춘선(), 0)));
-//        assertTrue(sections.getSections().contains(Section.createSection(create_강남역(), create_왕십리역(), LineFixData.createLine_경춘선(), 0)));
-//    }
-//
-//    @Test
-//    void 중간_하행선_등록() {
-//        // 강남 성수 정자
-//        sections.addSection(create_성수역(), create_정자역(), LineFixData.createLine_경춘선(), 0);
-//        // 강남 성수 왕십리 정자
-//        sections.addSection(create_성수역(), create_왕십리역(), LineFixData.createLine_경춘선(), 0);
-//
-//        assertTrue(sections.getSections().contains(Section.createSection(create_성수역(), create_왕십리역(), LineFixData.createLine_경춘선(), 0)));
-//        assertTrue(sections.getSections().contains(Section.createSection(create_왕십리역(), create_정자역(), LineFixData.createLine_경춘선(), 0)));
-//    }
+    @Test
+    void 역_중간_등록_거리_초과() {
+        sections.addSection(SectionFixData.성수_왕십리());
+        assertThrows(SectionDistanceExceedException.class, ()->sections.addSection(SectionFixData.성수_정자()));
+    }
+
+    @Test
+    void 역_사이_거리() {
+        Section 강남_왕십리 = SectionFixData.강남_왕십리();
+        sections.addSection(강남_왕십리);
+        assertEquals(94,section.getDistance());
+    }
 }

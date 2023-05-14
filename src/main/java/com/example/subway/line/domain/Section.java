@@ -78,7 +78,9 @@ public class Section {
         this.downStation = downStation;
     }
 
-
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
 
     @Override
     public boolean equals(Object o) {

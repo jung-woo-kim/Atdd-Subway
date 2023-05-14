@@ -11,7 +11,7 @@ public class SectionFixData {
     private static final int distance = 6;
 
     public static Section 강남_성수() {
-        return Section.createSection(create_강남역(), create_성수역(), line, distance);
+        return Section.createSection(create_강남역(), create_성수역(), line, 100);
     }
 
     public static Section 성수_왕십리() {
@@ -23,7 +23,7 @@ public class SectionFixData {
     }
 
     public static Section 성수_정자() {
-        return Section.createSection(create_성수역(), create_정자역(), line, distance);
+        return Section.createSection(create_성수역(), create_정자역(), line, 100);
     }
 
     public static Section 성수_강남() {

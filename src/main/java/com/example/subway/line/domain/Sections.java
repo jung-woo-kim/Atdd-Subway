@@ -33,6 +33,7 @@ public class Sections {
     private void changeMatchedDownSection(Section section, Section matchedSection) {
         validateMatchedSection(section, matchedSection);
         matchedSection.setDownStation(section.getUpStation());
+        matchedSection.setDistance(matchedSection.getDistance()- section.getDistance());
     }
 
     private void validateMatchedSection(Section section, Section matchedSection) {
@@ -42,7 +43,9 @@ public class Sections {
     }
 
     private void changeMatchedUpSection(Section section, Section matchedSection) {
+        validateMatchedSection(section, matchedSection);
         matchedSection.setUpStation(section.getDownStation());
+        matchedSection.setDistance(matchedSection.getDistance()- section.getDistance());
     }
 
     private void validateAddSection(Section section) {
