@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class SectionExceptionAdvice {
-    @ExceptionHandler(LineDuplicateException.class)
+    @ExceptionHandler({SectionDuplicateException.class, SectionMinimumSizeException.class, SectionDistanceExceedException.class, SectionNotLastStationException.class})
     public ResponseEntity<ErrorResponse> sectionDuplicateException(SectionDuplicateException e) {
         return ResponseEntity.badRequest().body(ErrorResponse.create(e.getExceptionType()));
     }
 
-    @ExceptionHandler(LineNotExistedException.class)
-    public ResponseEntity<ErrorResponse> sectioNotExistedException(SectionNotExistedException e) {
+    @ExceptionHandler(SectionNotExistedException.class)
+    public ResponseEntity<ErrorResponse> sectionNotExistedException(SectionNotExistedException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorResponse.create(e.getExceptionType()));
     }
 }

@@ -74,6 +74,10 @@ public class Section {
         this.upStation = upStation;
     }
 
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
     public void setDownStation(Station downStation) {
         this.downStation = downStation;
     }
