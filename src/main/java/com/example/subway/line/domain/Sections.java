@@ -1,6 +1,8 @@
 package com.example.subway.line.domain;
 
+
 import com.example.subway.line.exception.section.*;
+
 import com.example.subway.station.domain.Station;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
@@ -31,6 +33,7 @@ public class Sections {
     }
 
     private void changeMatchedDownSection(Section section, Section matchedSection) {
+
         validateMatchedSection(section, matchedSection);
         matchedSection.setDownStation(section.getUpStation());
         matchedSection.setDistance(matchedSection.getDistance()- section.getDistance());
@@ -47,6 +50,7 @@ public class Sections {
         matchedSection.setUpStation(section.getDownStation());
         matchedSection.setDistance(matchedSection.getDistance()- section.getDistance());
     }
+
 
     private void validateAddSection(Section section) {
         if (sections.isEmpty()) {
@@ -93,7 +97,6 @@ public class Sections {
 
         return result;
     }
-
 
 
     public void deleteStation(Station station) {

@@ -78,4 +78,5 @@ class SectionsTest {
         sections.addSection(강남_왕십리);
         assertEquals(94,section.getDistance());
     }
+
 }
