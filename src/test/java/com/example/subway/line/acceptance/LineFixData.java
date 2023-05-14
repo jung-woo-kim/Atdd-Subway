@@ -20,7 +20,7 @@ public class LineFixData {
 
     public static Line createLine_경춘선() {
         Line line = new Line(경춘, 초록색);
-        line.addSection(Section.createSection(StationFixData.create_강남역(),StationFixData.create_성수역(),line,distance));
+        line.addSection(StationFixData.create_강남역(), StationFixData.create_성수역(), distance);
         return line;
     }
 
@@ -30,7 +30,7 @@ public class LineFixData {
 
     public static Line createLine_신분당() {
         Line line = new Line(신분당, 빨간색);
-        line.addSection(Section.createSection(StationFixData.create_강남역(),StationFixData.create_성수역(),line,distance));
+        line.addSection(StationFixData.create_강남역(), StationFixData.create_성수역(), distance);
         return line;
     }
 
