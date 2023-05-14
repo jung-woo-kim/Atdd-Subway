@@ -66,4 +66,15 @@ public class LineFixData {
 
         return 신분당선;
     }
+
+    public static Map<String, String> createLineCreateParams(String name, String color, Long upStationId, Long downStationId, int distance) {
+        Map<String, String> lineCreateParams;
+        lineCreateParams = new HashMap<>();
+        lineCreateParams.put("name", name);
+        lineCreateParams.put("color", color);
+        lineCreateParams.put("upStationId", upStationId.toString());
+        lineCreateParams.put("downStationId", downStationId.toString());
+        lineCreateParams.put("distance", distance + "");
+        return lineCreateParams;
+    }
 }
