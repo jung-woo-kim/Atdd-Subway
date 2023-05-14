@@ -7,6 +7,7 @@ import com.example.subway.line.exception.section.SectionMinimumSizeException;
 import com.example.subway.line.exception.section.SectionNotLastStationException;
 import com.example.subway.station.StationFixData;
 import com.example.subway.station.domain.Station;
+import com.example.subway.station.exception.StationNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -37,23 +38,6 @@ class SectionsTest {
     }
 
     @Test
-    void 역_최소_삭제_실패() {
-        assertThrows(SectionMinimumSizeException.class,() -> sections.deleteStation(create_성수역()));
-    }
-
-    @Test
-    void 역_삭제() {
-        sections.addSection(SectionFixData.성수_정자());
-        sections.deleteStation(create_정자역());
-        assertEquals(sections.getStations().get(sections.getStations().size()-1), create_성수역());
-    }
-
-    @Test
-    void 역_가장_하행선_아님_실패() {
-        assertThrows(SectionNotLastStationException.class,() -> sections.deleteStation(create_강남역()));
-    }
-
-    @Test
     void 노선_순서대로_조회() {
         sections.addSection(SectionFixData.성수_정자());
         sections.addSection(SectionFixData.성수_왕십리());
@@ -77,6 +61,41 @@ class SectionsTest {
         Section 강남_왕십리 = SectionFixData.강남_왕십리();
         sections.addSection(강남_왕십리);
         assertEquals(94,section.getDistance());
+    }
+
+    @Test
+    void 중간_역_삭제() {
+        Section 강남_왕십리 = SectionFixData.강남_왕십리();
+        sections.addSection(강남_왕십리);
+        sections.deleteStation(StationFixData.create_왕십리역());
+
+        assertThat(sections.getStations().stream().map(Station::getName)).containsExactly(강남역_이름, 성수역_이름);
+        assertEquals(100, sections.getSections().get(0).getDistance());
+    }
+
+    @Test
+    void 가장_하행선_삭제() {
+        sections.addSection(SectionFixData.성수_정자());
+        sections.deleteStation(StationFixData.create_정자역());
+        assertThat(sections.getStations().stream().map(Station::getName)).containsExactly(강남역_이름, 성수역_이름);
+    }
+
+    @Test
+    void 가장_상행선_삭제() {
+        sections.addSection(SectionFixData.성수_정자());
+        sections.deleteStation(create_강남역());
+        assertThat(sections.getStations().stream().map(Station::getName)).containsExactly(성수역_이름, 정자역_이름);
+    }
+
+    @Test
+    void 역_최소_삭제_실패() {
+        assertThrows(SectionMinimumSizeException.class,() -> sections.deleteStation(create_성수역()));
+    }
+
+    @Test
+    void 역_미존재_삭제_실패() {
+        sections.addSection(SectionFixData.성수_왕십리());
+        assertThrows(StationNotFoundException.class,() -> sections.deleteStation(create_정자역()));
     }
 
 }

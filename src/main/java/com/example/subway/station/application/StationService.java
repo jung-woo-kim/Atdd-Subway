@@ -34,7 +34,7 @@ public class StationService {
     }
 
     public Station findById(Long id) {
-        return stationRepository.findById(id).orElseThrow(() -> new StationNotFoundException(StationExceptionType.STATION_NOT_EXIST));
+        return stationRepository.findById(id).orElseThrow(StationNotFoundException::new);
     }
 
     @Transactional

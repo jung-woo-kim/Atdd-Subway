@@ -4,6 +4,8 @@ package com.example.subway.line.domain;
 import com.example.subway.line.exception.section.*;
 
 import com.example.subway.station.domain.Station;
+import com.example.subway.station.exception.StationExceptionType;
+import com.example.subway.station.exception.StationNotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
@@ -17,7 +19,7 @@ public class Sections {
     private static final int MINIMUM_SIZE = 1;
 
     @OneToMany(mappedBy = "line", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    private List<Section> sections= new ArrayList<>();
+    private List<Section> sections = new ArrayList<>();
 
 
     public void addSection(Section section) {
@@ -36,7 +38,7 @@ public class Sections {
 
         validateMatchedSection(section, matchedSection);
         matchedSection.setDownStation(section.getUpStation());
-        matchedSection.setDistance(matchedSection.getDistance()- section.getDistance());
+        matchedSection.setDistance(matchedSection.getDistance() - section.getDistance());
     }
 
     private void validateMatchedSection(Section section, Section matchedSection) {
@@ -48,7 +50,7 @@ public class Sections {
     private void changeMatchedUpSection(Section section, Section matchedSection) {
         validateMatchedSection(section, matchedSection);
         matchedSection.setUpStation(section.getDownStation());
-        matchedSection.setDistance(matchedSection.getDistance()- section.getDistance());
+        matchedSection.setDistance(matchedSection.getDistance() - section.getDistance());
     }
 
 
@@ -98,20 +100,41 @@ public class Sections {
         return result;
     }
 
-
     public void deleteStation(Station station) {
-        validationDeleteStation(station);
-        Section lastSection = sections.get(lastIndex());
-        sections.remove(lastSection);
-    }
+        Optional<Section> upSectionOptional = anyMatchDownStation(station);
+        Optional<Section> downSectionOptional = anyMatchUpStation(station);
 
-    private void validationDeleteStation(Station station) {
-        if (!isLastDownStation(station)) {
-            throw new SectionNotLastStationException();
+        validateDeleteStation(upSectionOptional.isPresent(), downSectionOptional.isPresent());
+
+        if (upSectionOptional.isPresent() && downSectionOptional.isPresent()) {
+            Section upSection = upSectionOptional.get();
+            Section downSection = downSectionOptional.get();
+            upSection.setDistance(downSection.getDistance() + upSection.getDistance());
+            upSection.setDownStation(downSection.getDownStation());
+            sections.remove(downSection);
+            return;
         }
 
+        if (upSectionOptional.isPresent()) {
+            Section upSection = upSectionOptional.get();
+            sections.remove(upSection);
+            return;
+        }
+
+        if (downSectionOptional.isPresent()) {
+            Section downSection = downSectionOptional.get();
+            sections.remove(downSection);
+        }
+
+    }
+
+    private void validateDeleteStation(boolean isMatchUpSection, boolean isMatchDownSection) {
         if (isMinimumSectionSize()) {
             throw new SectionMinimumSizeException();
+        }
+
+        if (!isMatchDownSection && !isMatchUpSection) {
+            throw new StationNotFoundException();
         }
     }
 
@@ -119,28 +142,12 @@ public class Sections {
         return sections.size() == MINIMUM_SIZE;
     }
 
-    private boolean isLastDownStation(Station station) {
-        return sections.stream().noneMatch(section -> section.matchUpStation(station));
-    }
-
-    private int lastIndex() {
-        return sections.size() - 1;
-    }
-
     private Section geLastUpSection() {
         return sections.stream().filter(section -> sections.stream().noneMatch(compareSection -> compareSection.matchDownStation(section.getUpStation()))).findFirst().orElseThrow(SectionMinimumSizeException::new);
     }
 
-    private Section getLastDownSection() {
-        return sections.stream().filter(this::isLastSection).findFirst().orElseThrow(SectionMinimumSizeException::new);
-    }
-
     private Optional<Section> getNextDownSection(Section section) {
         return sections.stream().filter(compareSection -> section.matchDownStation(compareSection.getUpStation())).findFirst();
-    }
-
-    private boolean isLastSection(Section section) {
-        return getNextDownSection(section).isEmpty();
     }
 
     public List<Section> getSections() {
