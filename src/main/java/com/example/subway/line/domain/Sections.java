@@ -126,10 +126,8 @@ public class Sections {
         if (downSectionOptional.isPresent()) {
             Section downSection = downSectionOptional.get();
             sections.remove(downSection);
-            return;
         }
 
-        throw new SectionNotExistedException();
     }
 
     private void validateDeleteStation(boolean isMatchUpSection, boolean isMatchDownSection) {
@@ -146,17 +144,8 @@ public class Sections {
         return sections.size() == MINIMUM_SIZE;
     }
 
-    private boolean isLastDownStation(Station station) {
-        return sections.stream().noneMatch(section -> section.matchUpStation(station));
-    }
-
-
     private Section geLastUpSection() {
         return sections.stream().filter(section -> sections.stream().noneMatch(compareSection -> compareSection.matchDownStation(section.getUpStation()))).findFirst().orElseThrow(SectionMinimumSizeException::new);
-    }
-
-    private Section getLastDownSection() {
-        return sections.stream().filter(this::isLastSection).findFirst().orElseThrow(SectionMinimumSizeException::new);
     }
 
     private Optional<Section> getNextDownSection(Section section) {
