@@ -19,7 +19,7 @@ public class Sections {
     private static final int MINIMUM_SIZE = 1;
 
     @OneToMany(mappedBy = "line", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
-    private List<Section> sections= new ArrayList<>();
+    private List<Section> sections = new ArrayList<>();
 
 
     public void addSection(Section section) {
@@ -38,7 +38,7 @@ public class Sections {
 
         validateMatchedSection(section, matchedSection);
         matchedSection.setDownStation(section.getUpStation());
-        matchedSection.setDistance(matchedSection.getDistance()- section.getDistance());
+        matchedSection.setDistance(matchedSection.getDistance() - section.getDistance());
     }
 
     private void validateMatchedSection(Section section, Section matchedSection) {
@@ -50,7 +50,7 @@ public class Sections {
     private void changeMatchedUpSection(Section section, Section matchedSection) {
         validateMatchedSection(section, matchedSection);
         matchedSection.setUpStation(section.getDownStation());
-        matchedSection.setDistance(matchedSection.getDistance()- section.getDistance());
+        matchedSection.setDistance(matchedSection.getDistance() - section.getDistance());
     }
 
 
@@ -100,8 +100,6 @@ public class Sections {
         return result;
     }
 
-
-    // (A B) (B D) -> B -> B D 삭제, A D
     public void deleteStation(Station station) {
         Optional<Section> upSectionOptional = anyMatchDownStation(station);
         Optional<Section> downSectionOptional = anyMatchUpStation(station);
@@ -136,7 +134,7 @@ public class Sections {
         }
 
         if (!isMatchDownSection && !isMatchUpSection) {
-            throw new StationNotFoundException(StationExceptionType.STATION_NOT_EXIST);
+            throw new StationNotFoundException();
         }
     }
 
@@ -150,10 +148,6 @@ public class Sections {
 
     private Optional<Section> getNextDownSection(Section section) {
         return sections.stream().filter(compareSection -> section.matchDownStation(compareSection.getUpStation())).findFirst();
-    }
-
-    private boolean isLastSection(Section section) {
-        return getNextDownSection(section).isEmpty();
     }
 
     public List<Section> getSections() {
