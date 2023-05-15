@@ -1,5 +1,6 @@
 package com.example.subway.member;
 
+import com.example.subway.common.AcceptanceTest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import static com.example.subway.member.MemberSteps.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MemberAcceptanceTest {
+public class MemberAcceptanceTest extends AcceptanceTest {
     public static final String EMAIL = "email@email.com";
     public static final String PASSWORD = "password";
     public static final int AGE = 20;

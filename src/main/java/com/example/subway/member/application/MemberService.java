@@ -29,4 +29,10 @@ public class MemberService {
         Member member = memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
         return MemberResponse.of(member);
     }
+
+    @Transactional
+    public void updateMember(long id, MemberRequest memberRequest) {
+        Member member = memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
+        member.update(memberRequest.toMember());
+    }
 }

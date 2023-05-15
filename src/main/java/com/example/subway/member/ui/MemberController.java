@@ -30,4 +30,10 @@ public class MemberController {
         MemberResponse member = memberService.findMemberById(id);
         return ResponseEntity.ok().body(member);
     }
+
+    @PutMapping("/members/{id}")
+    public ResponseEntity<Void> updateMember(@PathVariable long id, @RequestBody MemberRequest request) {
+        memberService.updateMember(id, request);
+        return ResponseEntity.ok().build();
+    }
 }
