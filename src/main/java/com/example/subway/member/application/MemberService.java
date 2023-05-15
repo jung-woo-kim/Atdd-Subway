@@ -35,4 +35,9 @@ public class MemberService {
         Member member = memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
         member.update(memberRequest.toMember());
     }
+
+    @Transactional
+    public void deleteMember(long id) {
+        memberRepository.deleteById(id);
+    }
 }
