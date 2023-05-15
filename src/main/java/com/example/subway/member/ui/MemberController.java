@@ -6,8 +6,7 @@ import com.example.subway.member.application.dto.MemberResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
@@ -20,9 +19,15 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @RequestMapping("/members")
+    @PostMapping("/members")
     public ResponseEntity<Void> createMember(@RequestBody MemberRequest request) {
         MemberResponse memberResponse = memberService.createMember(request);
         return ResponseEntity.created(URI.create("/members/" + memberResponse.getId())).build();
+    }
+
+    @GetMapping("/members/{id}")
+    public ResponseEntity<MemberResponse> findMemberById(@PathVariable long id) {
+        MemberResponse member = memberService.findMemberById(id);
+        return ResponseEntity.ok().body(member);
     }
 }
