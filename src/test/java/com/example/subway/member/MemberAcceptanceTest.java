@@ -15,52 +15,33 @@ public class MemberAcceptanceTest extends AcceptanceTest {
     public static final String PASSWORD = "password";
     public static final int AGE = 20;
 
-    @DisplayName("회원가입을 한다.")
+    @DisplayName("회원 정보를 관리한다.")
     @Test
-    void createMember() {
+    void manageMember() {
         // when
-        ExtractableResponse<Response> response = 회원_생성_요청(EMAIL, PASSWORD, AGE);
+        ExtractableResponse<Response> 회원_생성_응답 = 회원_생성_요청(EMAIL, PASSWORD, AGE);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-    }
+        assertThat(회원_생성_응답.statusCode()).isEqualTo(HttpStatus.CREATED.value());
 
-    @DisplayName("회원 정보를 조회한다.")
-    @Test
-    void getMember() {
-        // given
-        ExtractableResponse<Response> createResponse = 회원_생성_요청(EMAIL, PASSWORD, AGE);
 
         // when
-        ExtractableResponse<Response> response = 회원_정보_조회_요청(createResponse);
+        ExtractableResponse<Response> 회원_정보_조회_응답 = 회원_정보_조회_요청(회원_생성_응답);
 
         // then
-        회원_정보_조회됨(response, EMAIL, AGE);
+        회원_정보_조회됨(회원_정보_조회_응답, EMAIL, AGE);
 
-    }
-
-    @DisplayName("회원 정보를 수정한다.")
-    @Test
-    void updateMember() {
-        // given
-        ExtractableResponse<Response> createResponse = 회원_생성_요청(EMAIL, PASSWORD, AGE);
 
         // when
-        ExtractableResponse<Response> response = 회원_정보_수정_요청(createResponse, "new" + EMAIL, "new" + PASSWORD, AGE);
+        ExtractableResponse<Response> 회원_정보_수정_응답 = 회원_정보_수정_요청(회원_생성_응답, "new" + EMAIL, "new" + PASSWORD, AGE);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-    }
-
-    @DisplayName("회원을 삭제한다.")
-    void deleteMember() {
-        // given
-        ExtractableResponse<Response> createResponse = 회원_생성_요청(EMAIL, PASSWORD, AGE);
+        assertThat(회원_정보_수정_응답.statusCode()).isEqualTo(HttpStatus.OK.value());
 
         // when
-        ExtractableResponse<Response> response = 회원_삭제_요청(createResponse);
+        ExtractableResponse<Response> 회원_삭제_응답 = 회원_삭제_요청(회원_생성_응답);
 
         // then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+        assertThat(회원_삭제_응답.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 }
