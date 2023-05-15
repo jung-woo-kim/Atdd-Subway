@@ -21,6 +21,12 @@ public class Sections {
     @OneToMany(mappedBy = "line", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Section> sections = new ArrayList<>();
 
+    public Sections() {
+    }
+
+    public Sections(List<Section> sections) {
+        this.sections = sections;
+    }
 
     public void addSection(Section section) {
         // 역 사이에 끼는 경우인지 체크
@@ -152,6 +158,10 @@ public class Sections {
 
     public List<Section> getSections() {
         return sections;
+    }
+
+    public int totalDistance() {
+        return sections.stream().mapToInt(Section::getDistance).sum();
     }
 }
 

@@ -20,7 +20,7 @@ public class LineFixData {
 
     public static Line createLine_경춘선() {
         Line line = new Line(경춘, 초록색);
-        line.addSection(Section.createSection(StationFixData.create_강남역(),StationFixData.create_성수역(),line,distance));
+        line.addSection(StationFixData.create_강남역(), StationFixData.create_성수역(), distance);
         return line;
     }
 
@@ -30,7 +30,7 @@ public class LineFixData {
 
     public static Line createLine_신분당() {
         Line line = new Line(신분당, 빨간색);
-        line.addSection(Section.createSection(StationFixData.create_강남역(),StationFixData.create_성수역(),line,distance));
+        line.addSection(StationFixData.create_강남역(), StationFixData.create_성수역(), distance);
         return line;
     }
 
@@ -65,5 +65,16 @@ public class LineFixData {
         신분당선.put("distance", distance + "");
 
         return 신분당선;
+    }
+
+    public static Map<String, String> createLineCreateParams(String name, String color, Long upStationId, Long downStationId, int distance) {
+        Map<String, String> lineCreateParams;
+        lineCreateParams = new HashMap<>();
+        lineCreateParams.put("name", name);
+        lineCreateParams.put("color", color);
+        lineCreateParams.put("upStationId", upStationId.toString());
+        lineCreateParams.put("downStationId", downStationId.toString());
+        lineCreateParams.put("distance", distance + "");
+        return lineCreateParams;
     }
 }

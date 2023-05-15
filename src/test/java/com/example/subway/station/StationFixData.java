@@ -49,4 +49,10 @@ public class StationFixData {
 
         return 정자역;
     }
+
+    public static Map<String,String> createStationParams(String name) {
+        Map<String, String> params = new HashMap<>();
+        params.put("name", name);
+        return params;
+    }
 }
