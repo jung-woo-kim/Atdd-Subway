@@ -40,4 +40,9 @@ public class MemberService {
     public void deleteMember(long id) {
         memberRepository.deleteById(id);
     }
+
+    public MemberResponse findMemberByEmail(String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+        return MemberResponse.of(member);
+    }
 }
