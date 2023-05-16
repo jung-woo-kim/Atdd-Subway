@@ -1,5 +1,6 @@
 package com.example.subway.member.ui;
 
+import com.example.subway.filter.PreAuthorize;
 import com.example.subway.member.application.MemberService;
 import com.example.subway.member.application.dto.MemberRequest;
 import com.example.subway.member.application.dto.MemberResponse;
@@ -41,5 +42,10 @@ public class MemberController {
     public ResponseEntity<Void> deleteMember(@PathVariable long id) {
         memberService.deleteMember(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/members/me")
+    public ResponseEntity<MemberResponse> findMemberOfMine(@PreAuthorize MemberResponse member) {
+        return ResponseEntity.ok().body(member);
     }
 }
