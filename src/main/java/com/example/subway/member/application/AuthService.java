@@ -1,6 +1,5 @@
 package com.example.subway.member.application;
 
-import com.example.subway.member.application.dto.GithubProfileResponse;
 import com.example.subway.member.application.dto.TokenRequest;
 import com.example.subway.member.application.dto.TokenResponse;
 import com.example.subway.member.domain.Member;
@@ -33,9 +32,9 @@ public class AuthService {
 
     public TokenResponse loginWithGithub(String code) {
         String accessToken = githubClient.getAccessTokenFromGithub(code);
-        GithubProfileResponse profileResponse = githubClient.getGithubProfileFromGithub(accessToken);
-        Member member = memberRepository.findByEmail(profileResponse.getEmail())
-                .orElse(memberRepository.save(new Member(profileResponse.getEmail(), "password", 20)));
+        String email = githubClient.getGithubProfileFromGithub(accessToken);
+        Member member = memberRepository.findByEmail(email)
+                .orElse(memberRepository.save(new Member(email, "password", 20)));
         return TokenResponse.of(jwtTokenProvider.createToken(member.getEmail(), member.getRoles()));
     }
 

@@ -1,6 +1,7 @@
 package com.example.subway.member;
 
 import com.example.subway.common.AcceptanceTest;
+import com.example.subway.member.mock.GithubResponses;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
@@ -53,5 +54,13 @@ public class MemberAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> 베어러_인증으로_내_회원_정보_조회_응답 = 베어러_인증으로_내_회원_정보_조회_요청(accessToken);
         회원_정보_조회됨(베어러_인증으로_내_회원_정보_조회_응답, EMAIL, AGE);
 
+    }
+
+    @DisplayName("깃헙 로그인 토큰을 이용해 정보를 조회한다.")
+    @Test
+    void getMyInfoWithGithub() {
+        String accessToken = 깃허브_소셜_로그인_요청(GithubResponses.사용자1.getCode()).jsonPath().getString("accessToken");
+        ExtractableResponse<Response> 베어러_인증으로_내_회원_정보_조회_응답 = 베어러_인증으로_내_회원_정보_조회_요청(accessToken);
+        회원_정보_조회됨(베어러_인증으로_내_회원_정보_조회_응답, GithubResponses.사용자1.getEmail(), 20);
     }
 }
