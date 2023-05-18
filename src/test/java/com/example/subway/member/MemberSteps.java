@@ -74,6 +74,14 @@ public class MemberSteps {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> 깃허브_소셜_로그인_요청(String code) {
+        return RestAssured.given().log().all()
+                .when().get("/login/oauth2/code?code=" + code)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract();
+    }
+
     public static void 회원_정보_조회됨(ExtractableResponse<Response> response, String email, int age) {
         assertThat(response.jsonPath().getString("id")).isNotNull();
         assertThat(response.jsonPath().getString("email")).isEqualTo(email);
