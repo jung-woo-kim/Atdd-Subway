@@ -11,13 +11,13 @@ public class Favorite {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    Member member;
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    Station source;
+    private Station source;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    Station target;
+    private Station target;
 
     public Favorite() {
     }
@@ -30,6 +30,14 @@ public class Favorite {
 
     public static Favorite createFavorite(Member member, Station source, Station target) {
         return new Favorite(member, source, target);
+    }
+
+    public boolean isSameSource(Station source) {
+        return source.equals(this.source);
+    }
+
+    public boolean isSameTarget(Station target) {
+        return target.equals(this.target);
     }
 
     public Long getId() {

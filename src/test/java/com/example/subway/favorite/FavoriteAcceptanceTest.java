@@ -55,7 +55,7 @@ public class FavoriteAcceptanceTest extends AcceptanceTest {
         지하철_노선에_지하철_구간_생성_요청(삼호선, createSectionCreateParams(남부터미널역, 양재역, 3));
     }
 
-    @DisplayName("즐겨찾기 생성")
+    @DisplayName("즐겨찾기 생성 및 중복 생성")
     @Test
     void createFavorite() {
         // given
@@ -72,6 +72,16 @@ public class FavoriteAcceptanceTest extends AcceptanceTest {
                 .body(createFavoriteCreateParams(교대역, 양재역))
                 .when().post("/favorites")
                 .then().log().all().extract();
+
+        ExtractableResponse<Response> 즐겨찾기_생성_응답2 = RestAssured.given().log().all()
+                .auth().oauth2(accessToken)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(createFavoriteCreateParams(교대역, 양재역))
+                .when().post("/favorites")
+                .then().log().all().extract();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), 즐겨찾기_생성_응답2.statusCode());
 
         // then
         assertEquals(HttpStatus.CREATED.value(), 즐겨찾기_생성_응답.statusCode());

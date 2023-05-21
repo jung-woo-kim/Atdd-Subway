@@ -20,8 +20,14 @@ public class Favorites {
     }
 
     public void addFavorite(Favorite favorite) {
+        validateFavorite(favorite);
         favorites.add(favorite);
+    }
 
+    private void validateFavorite(Favorite favorite) {
+        if (favorites.stream().anyMatch(f -> f.isSameSource(favorite.getSource()) && f.isSameTarget(f.getTarget()))) {
+            throw new IllegalArgumentException("즐겨찾기 중복");
+        }
     }
 
     public List<Favorite> getFavorites() {
