@@ -85,6 +85,18 @@ public class FavoriteAcceptanceTest extends AcceptanceTest {
 
         // then
         assertEquals(HttpStatus.CREATED.value(), 즐겨찾기_생성_응답.statusCode());
+
+        // when
+        ExtractableResponse<Response> 즐겨찾기_조회_응답 = RestAssured.given().log().all()
+                .auth().oauth2(accessToken)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .when().get("/favorites")
+                .then().log().all().extract();
+
+        // then
+        assertEquals(HttpStatus.OK.value(), 즐겨찾기_조회_응답.statusCode());
+        assertEquals(1, 즐겨찾기_조회_응답.jsonPath().getList("id").size());
+
     }
 
     private Map<String, String> createSectionCreateParams(Long upStationId, Long downStationId, int distance) {

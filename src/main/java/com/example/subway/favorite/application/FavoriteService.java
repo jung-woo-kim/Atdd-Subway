@@ -1,6 +1,7 @@
 package com.example.subway.favorite.application;
 
 import com.example.subway.favorite.application.dto.FavoriteRequest;
+import com.example.subway.favorite.application.dto.FavoriteResponse;
 import com.example.subway.member.application.dto.MemberResponse;
 import com.example.subway.member.domain.Member;
 import com.example.subway.member.domain.MemberRepository;
@@ -11,6 +12,8 @@ import com.example.subway.station.exception.StationNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional(readOnly = true)
 @Service
@@ -32,5 +35,12 @@ public class FavoriteService {
 
         member.addFavorite(source, target);
         return MemberResponse.of(member);
+    }
+
+    public List<FavoriteResponse> findFavorites(MemberResponse memberResponse) {
+        Member member = memberRepository.findById(memberResponse.getId()).orElseThrow(MemberNotFoundException::new);
+        return member.getFavorites().stream()
+                .map(FavoriteResponse::of)
+                .toList();
     }
 }

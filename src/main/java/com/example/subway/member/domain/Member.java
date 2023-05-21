@@ -69,8 +69,8 @@ public class Member {
         return roles;
     }
 
-    public Favorites getFavorites() {
-        return favorites;
+    public List<Favorite> getFavorites() {
+        return favorites.getFavorites();
     }
 
     public void update(Member member) {
