@@ -3,18 +3,17 @@ package com.example.subway.favorite;
 import com.example.subway.common.AcceptanceTest;
 import com.example.subway.line.acceptance.LineFixData;
 import com.example.subway.station.StationFixData;
-import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.subway.favorite.FavoriteSteps.*;
 import static com.example.subway.line.acceptance.LineStep.지하철_노선_생성_요청;
 import static com.example.subway.line.acceptance.SectionStep.지하철_노선에_지하철_구간_생성_요청;
 import static com.example.subway.member.MemberSteps.베어러_인증_로그인_요청;
@@ -55,9 +54,9 @@ public class FavoriteAcceptanceTest extends AcceptanceTest {
         지하철_노선에_지하철_구간_생성_요청(삼호선, createSectionCreateParams(남부터미널역, 양재역, 3));
     }
 
-    @DisplayName("즐겨찾기 생성 및 중복 생성")
+    @DisplayName("즐겨찾기 생성, 중복 생성, 조회, 삭제")
     @Test
-    void createFavorite() {
+    void favoriteCRUD() {
         // given
         회원_생성_요청("temp@email.com", "temp",20);
         String accessToken = 베어러_인증_로그인_요청("temp@email.com", "temp").jsonPath().getString("accessToken");
@@ -65,38 +64,23 @@ public class FavoriteAcceptanceTest extends AcceptanceTest {
 
         // when
         // 교대역 남부미널역 양재역
-        ExtractableResponse<Response> 즐겨찾기_생성_응답 = RestAssured.given().log().all()
-                .auth().oauth2(accessToken)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(createFavoriteCreateParams(교대역, 양재역))
-                .when().post("/favorites")
-                .then().log().all().extract();
-
-        ExtractableResponse<Response> 즐겨찾기_생성_응답2 = RestAssured.given().log().all()
-                .auth().oauth2(accessToken)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(createFavoriteCreateParams(교대역, 양재역))
-                .when().post("/favorites")
-                .then().log().all().extract();
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), 즐겨찾기_생성_응답2.statusCode());
+        ExtractableResponse<Response> 즐겨찾기_생성_응답 = 즐겨찾기_생성_요청(accessToken,createFavoriteCreateParams(교대역, 양재역));
 
         // then
         assertEquals(HttpStatus.CREATED.value(), 즐겨찾기_생성_응답.statusCode());
 
         // when
-        ExtractableResponse<Response> 즐겨찾기_조회_응답 = RestAssured.given().log().all()
-                .auth().oauth2(accessToken)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-                .when().get("/favorites")
-                .then().log().all().extract();
+        ExtractableResponse<Response> 즐겨찾기_중복_생성_응답 = 즐겨찾기_생성_요청(accessToken,createFavoriteCreateParams(교대역, 양재역));
+
+        // then
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), 즐겨찾기_중복_생성_응답.statusCode());
+
+        // when
+        ExtractableResponse<Response> 즐겨찾기_조회_응답 = 즐겨찾기_조회_요청(accessToken);
 
         // then
         assertEquals(HttpStatus.OK.value(), 즐겨찾기_조회_응답.statusCode());
         assertEquals(1, 즐겨찾기_조회_응답.jsonPath().getList("id").size());
-
     }
 
     private Map<String, String> createSectionCreateParams(Long upStationId, Long downStationId, int distance) {
