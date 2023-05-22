@@ -45,8 +45,12 @@ public class Member {
         this.roles = roles;
     }
 
-    public void addFavorite(Station source, Station target) {
-        favorites.addFavorite(Favorite.createFavorite(this, source, target));
+    public Favorite addFavorite(Station source, Station target) {
+        return favorites.addFavorite(Favorite.createFavorite(this, source, target));
+    }
+
+    public void deleteFavorite(Favorite favorite) {
+        favorites.deleteFavorite(favorite);
     }
 
     public Long getId() {

@@ -4,6 +4,8 @@ import com.example.subway.member.domain.Member;
 import com.example.subway.station.domain.Station;
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 public class Favorite {
     @Id
@@ -54,5 +56,23 @@ public class Favorite {
 
     public Station getTarget() {
         return target;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) {
+            return false;
+        }
+
+        if (!(o instanceof Favorite favorite)) {
+            return false;
+        }
+        return Objects.equals(getId(), favorite.getId()) && Objects.equals(getMember(), favorite.getMember()) && Objects.equals(getSource(), favorite.getSource()) && Objects.equals(getTarget(), favorite.getTarget());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getMember(), getSource(), getTarget());
     }
 }

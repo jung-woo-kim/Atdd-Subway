@@ -7,9 +7,7 @@ import com.example.subway.filter.PreAuthorize;
 import com.example.subway.member.application.dto.MemberResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
@@ -24,14 +22,21 @@ public class FavoriteController {
     }
 
     @PostMapping("/favorites")
-    private ResponseEntity<MemberResponse> createFavoritePath(@PreAuthorize MemberResponse memberResponse, @RequestBody FavoriteRequest favoriteRequest) {
-        MemberResponse member = favoriteService.createFavorite(memberResponse, favoriteRequest);
-        return ResponseEntity.created(URI.create("/favorites/" + member.getId())).build();
+    public ResponseEntity<FavoriteResponse> createFavoritePath(@PreAuthorize MemberResponse memberResponse, @RequestBody FavoriteRequest favoriteRequest) {
+        FavoriteResponse favoriteResponse = favoriteService.createFavorite(memberResponse, favoriteRequest);
+        return ResponseEntity.created(URI.create("/favorites/" + favoriteResponse.getId())).build();
     }
 
     @GetMapping("/favorites")
-    private ResponseEntity<List<FavoriteResponse>> findFavorites(@PreAuthorize MemberResponse memberResponse) {
+    public ResponseEntity<List<FavoriteResponse>> findFavorites(@PreAuthorize MemberResponse memberResponse) {
         List<FavoriteResponse> favorites = favoriteService.findFavorites(memberResponse);
         return ResponseEntity.ok().body(favorites);
     }
+
+    @DeleteMapping("/favorites/{id}")
+    public ResponseEntity<Void> deleteFavorite(@PreAuthorize MemberResponse memberResponse, @PathVariable long id) {
+        favoriteService.deleteFavorite(memberResponse, id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

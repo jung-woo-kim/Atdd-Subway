@@ -19,9 +19,21 @@ public class Favorites {
         this.favorites = favorites;
     }
 
-    public void addFavorite(Favorite favorite) {
+    public Favorite addFavorite(Favorite favorite) {
         validateFavorite(favorite);
         favorites.add(favorite);
+        return favorite;
+    }
+
+    public void deleteFavorite(Favorite favorite) {
+        validateDeleteFavorite(favorite);
+        favorites.remove(favorite);
+    }
+
+    public void validateDeleteFavorite(Favorite favorite) {
+        if (favorites.stream().noneMatch(inFavorite -> inFavorite.equals(favorite))) {
+            throw new IllegalArgumentException("멤버가 해당 즐겨찾기를 갖고있지 않습니다.");
+        }
     }
 
     private void validateFavorite(Favorite favorite) {

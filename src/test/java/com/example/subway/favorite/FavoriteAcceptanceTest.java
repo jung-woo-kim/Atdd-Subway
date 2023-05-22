@@ -81,6 +81,14 @@ public class FavoriteAcceptanceTest extends AcceptanceTest {
         // then
         assertEquals(HttpStatus.OK.value(), 즐겨찾기_조회_응답.statusCode());
         assertEquals(1, 즐겨찾기_조회_응답.jsonPath().getList("id").size());
+
+
+        // when
+        String location = 즐겨찾기_생성_응답.header("location");
+        ExtractableResponse<Response> 즐겨찾기_삭제_응답 = 즐겨찾기_삭제_요청(accessToken, location);
+
+        // then
+        즐겨찾기_삭제_확인(accessToken, 즐겨찾기_삭제_응답);
     }
 
     private Map<String, String> createSectionCreateParams(Long upStationId, Long downStationId, int distance) {
