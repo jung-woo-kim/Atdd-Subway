@@ -1,5 +1,8 @@
 package com.example.subway.member.domain;
 
+import com.example.subway.favorite.domain.Favorite;
+import com.example.subway.favorite.domain.Favorites;
+import com.example.subway.station.domain.Station;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -22,6 +25,9 @@ public class Member {
     @Column(name = "role")
     private List<String> roles;
 
+    @Embedded
+    private Favorites favorites;
+
     public Member() {
     }
 
@@ -37,6 +43,14 @@ public class Member {
         this.password = password;
         this.age = age;
         this.roles = roles;
+    }
+
+    public Favorite addFavorite(Station source, Station target) {
+        return favorites.addFavorite(Favorite.createFavorite(this, source, target));
+    }
+
+    public void deleteFavorite(Favorite favorite) {
+        favorites.deleteFavorite(favorite);
     }
 
     public Long getId() {
@@ -57,6 +71,10 @@ public class Member {
 
     public List<String> getRoles() {
         return roles;
+    }
+
+    public List<Favorite> getFavorites() {
+        return favorites.getFavorites();
     }
 
     public void update(Member member) {

@@ -33,7 +33,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
         String accessToken = bearerToken.substring(BEARER.length());
         validateAccessToken(response, accessToken);
-
         String principal = jwtTokenProvider.getPrincipal(accessToken);
         MemberResponse member = memberService.findMemberByEmail(principal);
         request.setAttribute("member", member);
