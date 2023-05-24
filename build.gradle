@@ -2,6 +2,11 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.5'
     id 'io.spring.dependency-management' version '1.1.0'
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
+}
+
+configurations {
+    asciidoctorExt
 }
 
 group = 'com.example'
@@ -30,8 +35,44 @@ dependencies {
 
     // jgraph
     implementation 'org.jgrapht:jgrapht-core:1.0.1'
+
+    // rest docs
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-restassured'
 }
 
-tasks.named('test') {
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+test {
     useJUnitPlatform()
+    outputs.dir snippetsDir
+}
+
+task testDocument(type: Test) {
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching "*.documentation.*"
+    }
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    configurations 'asciidoctorExt'
+    dependsOn test
+}
+
+bootJar {
+    dependsOn asciidoctor
+    from("build/asciidoc/html5") {
+        into 'static/docs'
+    }
+}
+
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
 }
